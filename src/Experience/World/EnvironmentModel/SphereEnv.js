@@ -22,12 +22,12 @@ export default class SphereEnv {
     }
 
     setGeometry() {
-        this.geometry = new THREE.SphereGeometry(60, 64, 64)
+        this.geometry = new THREE.SphereGeometry(600, 64, 64)
     }
 
     setMaterial() {
         this.material = new THREE.MeshBasicMaterial({
-            side: THREE.BackSide,
+            side: THREE.DoubleSide,
             transparent: true,
             opacity: 1
         })
@@ -36,8 +36,9 @@ export default class SphereEnv {
     setMesh() {
         this.mesh = new THREE.Mesh(this.geometry, this.material)
         // this.mesh.position.copy(this.experience.camera.instance.position)
-        this.mesh.layers.set(0) // Render after the skybox
+        // this.mesh.layers.set(1) // Render after the skybox
         this.scene.add(this.mesh)
+        // this.mesh.renderOrder = 1
         let value = 0
             this.changeTexture(`textures/environmentMap/MuseumEnv/360_test_000${value++%2}.jpeg`)
         
@@ -48,10 +49,16 @@ export default class SphereEnv {
     }
     addDebugProp(){
         if(this.debugFolder){
+            this.prop = {
+                scale:0
+            }
         this.debugFolder.add(this.mesh.position, 'x').min(-1000).max(1000).step(2) 
         this.debugFolder.add(this.mesh.position, 'y').min(-1000).max(1000).step(1);
         this.debugFolder.add(this.mesh.position, 'z').min(-1000).max(1000).step(1);
-       
+        
+        this.debugFolder.add(this.prop,'scale').min(0.1).max(100).step(0.01).onChange(()=>{
+            this.mesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)
+        });
         this.debugFolder.add(this.material, 'opacity').min(0).max(1).step(0.01);}
     }
 
@@ -59,45 +66,62 @@ export default class SphereEnv {
      * Loads a texture dynamically from a given URL and applies the transition
      */
     async changeTexture(textureUrl) {
-        // Load new texture dynamically
-        const newTexture = await this.loadTexture(textureUrl)
-        // newTexture.flipY = false;
-        // newTexture.flipX = false;
-        // If no current texture, just apply and return
-        if (!this.currentTexture) {
-            this.applyTexture(newTexture)
-            return
+        const newTexture = await this.loadTexture(textureUrl);
+        var maxanisotropy=this.experience.renderer.instance.capabilities.getMaxAnisotropy();
+        newTexture.anisotropy=maxanisotropy;
+        newTexture.wrapS = THREE.RepeatWrapping;
+        newTexture.encoding=THREE.sRGBEncoding;
+        newTexture.needsUpdate=true;
+        // newTexture.repeat.x = -1;
+        if (!this.currentSphere) {
+            this.currentSphere = this.createSphere(newTexture, 1); // If no sphere exists, create first one
+            return;
         }
-
-        // Move camera forward slightly for a "moving effect"
-        const camera = this.experience.camera.instance
-        const moveForward = new THREE.Vector3(0, 0, -5).applyQuaternion(camera.quaternion)
-
-        // Transition animation
-        gsap.to(this.mesh.scale, {
-            x: 1.2, y: 1.2, z: 1.2, // Simulating forward motion
-            duration: 1.5,
-            ease: 'power2.out'
-        })
-
-        gsap.to(this.material, {
+    
+        // Create a new sphere with the new texture, start with opacity 0
+        const newSphere = this.createSphere(newTexture, 0);
+        
+        // Animate transition: old sphere fades out, new sphere fades in
+        gsap.to(this.currentSphere.material, {
             opacity: 0,
-            duration: 1.5,
-            ease: 'power2.out',
+            duration: 2,
+            ease: "power2.out",
             onComplete: () => {
-                this.applyTexture(newTexture)
-                this.mesh.scale.set(1, 1, 1) // Reset scale
+                this.scene.remove(this.currentSphere); // Remove old sphere
+                this.currentSphere.geometry.dispose();
+                this.currentSphere.material.dispose();
+                this.currentSphere = newSphere; // Set new sphere as current
             }
-        })
-
-        // gsap.to(camera.position, {
-        //     x: camera.position.x + moveForward.x,
-        //     y: camera.position.y + moveForward.y,
-        //     z: camera.position.z + moveForward.z,
-        //     duration: 1.5,
-        //     ease: 'power2.out'
-        // })
+        });
+    
+        gsap.to(newSphere.material, {
+            opacity: 1,
+            duration: 2,
+            ease: "power2.out",
+        });
     }
+    
+    /**
+     * Creates a new sphere with a given texture and opacity.
+     */
+    createSphere(texture, initialOpacity) {
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.BackSide,
+            transparent: true,
+            opacity: initialOpacity,
+            emisiveIntensity: 0.2
+            
+        });
+    
+        const sphere = new THREE.Mesh(this.geometry, material);
+        sphere.position.copy(this.mesh.position); // Place new sphere at the same position
+        this.scene.add(sphere);
+    
+        return sphere;
+    }
+    
+    
 
     /**
      * Applies a new texture to the sphere

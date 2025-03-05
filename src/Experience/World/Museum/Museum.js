@@ -3,7 +3,8 @@ import {PerspectiveCamera} from 'three'
 import Experience from '../../Experience.js'
 import { BoxGeometry } from 'three'
 import { DoubleSide } from 'three'
-
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+import { BackSide } from 'three'
 export default class Museum
 {
     constructor()
@@ -15,6 +16,7 @@ export default class Museum
         this.time = this.experience.time
         this.debug = this.experience.debug
         this.muesumModelMesh = null;
+        this.firstCamera = null
         // Debug
         if(this.debug.active)
         {
@@ -31,38 +33,55 @@ export default class Museum
 
     createDebugCameraIndicator(position,name){
         const box = new BoxGeometry(0.1,0.1,0.1)
-        const material = new THREE.MeshBasicMaterial({ color: "red", })
+        const material = new THREE.MeshBasicMaterial({ color: "red" })
         const cube = new THREE.Mesh(box, material)
         cube.position.set(position.x, position.y, position.z)
         cube.name = name
-        cube.layers.enable(1)
+        // cube.layers.enable(1)
         
         this.scene.add(cube)
         this.camerasToIntersect.push(cube)
     }
     setModel()
     {
-        let scale = 0.03
+      
+       
+        let scale = 0.02
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
         this.model.rotation.y = -Math.PI / 2
         this.scene.add(this.model)
 
+        console.log("this,model",this.model);
         this.model.traverse((child) =>
         {
+            
             if(child instanceof PerspectiveCamera){
            
-                
+                if(child.name.includes("0000")){
+                this.firstCamera = child;
+                   
+                    
+            }
                 this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
             }
             if(child instanceof THREE.Mesh){
                 // child.material.transparent = true;
                 // child.material.opactiy = 0.1;
                 child.material.transparent=true
-                child.material.side = DoubleSide
+                // let helper = new VertexNormalsHelper( child, 1.0, 0xff0000, 1 );
+                child.material.side = BackSide
                 // child.material.opacity=0.5  
+                // child.add( helper );
+                // child.renderOrder=0
+                // child.material.depthWrite = false
+                // child.material.depthTest = true
+                // child.material.blending = THREE.NormalBlending,
+                
                 this.muesumModelMesh = child
-                // child.material.depthWrite = false; 
+                
+                // child.material.depthWrite = false
+                // child.material.depthTest = false
                 console.log("childMaterial",child.material.transparent);
                 
             }
@@ -79,6 +98,9 @@ export default class Museum
         this.debugFolder.add(this.muesumModelMesh.position, 'x').min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.position, 'y').min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.position, 'z').min(-1000).max(1000).step(0.01);
+        this.debugFolder.add(this.model.position, 'x').name("wholeX").min(-1000).max(1000).step(0.01);
+        this.debugFolder.add(this.model.position, 'y').name("wholeY").min(-1000).max(1000).step(0.01);
+        this.debugFolder.add(this.model.position, 'z').name("wholeZ").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.material, 'opacity').min(0).max(1).step(0.01);}
         this.debugFolder.add(this.prop,'scale').min(0.1).max(10).step(0.01).onChange(()=>{
             this.muesumModelMesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)

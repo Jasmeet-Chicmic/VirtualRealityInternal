@@ -18,9 +18,9 @@ export default class World
             // Setup
            
             this.intersectionObj = new Intersections()
+            this.sphere = new SphereEnv()
             this.museum = new Museum()
             this.environment = new Environment()
-            this.sphere = new SphereEnv()
         })
     }
 

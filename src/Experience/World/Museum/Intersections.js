@@ -32,7 +32,7 @@ export default class Intersections extends EventEmitter{
   
   }
 
-  removeCurrentCamera
+  
   onClick() {
    
 
@@ -83,9 +83,9 @@ export default class Intersections extends EventEmitter{
           
   //     }
   // )
-  this.experience.world.sphere.changeTexture(path)
+
   }
-  moveCamera(destinationPos) {
+  async moveCamera(destinationPos) {
     if (this.isCameraIntersected.length > 0) {
         // Store the previous camera for re-adding later
        
@@ -96,7 +96,8 @@ export default class Intersections extends EventEmitter{
         // Get the new camera to move to
         this.currentCamera = this.isCameraIntersected[0].object;
         const name =this.currentCamera.name.slice(this.currentCamera.name.length-4,this.currentCamera.name.length)
-        this.addNewEnv(EXPERIENCE.RENDERS_FOLDER_BASE+ EXPERIENCE["3DRENDER_BASE_NAME"] +name+".jpeg")
+     
+        await this.experience.world.sphere.changeTexture(EXPERIENCE.RENDERS_FOLDER_BASE+ EXPERIENCE["3DRENDER_BASE_NAME"] +name+".jpeg")
         // Remove the current camera from intersections
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
         if (index > -1) {
@@ -109,12 +110,13 @@ export default class Intersections extends EventEmitter{
    
     // Compute direction to look at smoothly
     const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
-    const startRotation = new THREE.Euler().copy(this.camera.instance.rotation);
+    this.camera.controls.target.copy(new Vector3(lookAtTarget.x+0.0001,lookAtTarget.y,lookAtTarget.z));
+    // const startRotation = new THREE.Euler().copy(this.camera.instance.rotation);
     this.camera.instance.lookAt(lookAtTarget);
-    const endQuaternion = new THREE.Quaternion().copy(this.camera.instance.quaternion);
+    // const endQuaternion = new THREE.Quaternion().copy(this.camera.instance.quaternion);
 
-    // Reset to original rotation before animating
-    this.camera.instance.rotation.copy(startRotation);
+    // // Reset to original rotation before animating
+    // this.camera.instance.rotation.copy(startRotation);
 
     gsap.to(this.camera.instance.position, {
         duration: 2,
@@ -126,27 +128,27 @@ export default class Intersections extends EventEmitter{
         },
         onUpdate: () => {
             // Gradually update the lookAt target (rotation)
-            this.camera.controls.target.lerp(lookAtTarget, 0.1);
-            this.camera.controls.update();
+            // this.camera.controls.target.lerp(lookAtTarget, 0.1);
+            // this.camera.controls.update();
         },
         onComplete: () => {
             this.camera.controls.enabled = true;
-            this.camera.controls.target.copy(new Vector3(lookAtTarget.x+0.1,lookAtTarget.y,lookAtTarget.z));
-            this.camera.controls.update();
+     
+            this.experience.world.museum.muesumModelMesh.visible = false;
             // this.experience.world.museum.material.opactity = 0.5;
             // this.camera.instance.layers.set(1);
         }
     });
 
     // Smoothly animate the rotation
-    gsap.to(this.camera.instance.quaternion, {
-        duration: 2,
-        x: endQuaternion.x,
-        y: endQuaternion.y,
-        z: endQuaternion.z,
-        w: endQuaternion.w,
-        ease: "power2.out"
-    });
+    // gsap.to(this.camera.instance.quaternion, {
+    //     duration: 2,
+    //     x: endQuaternion.x,
+    //     y: endQuaternion.y,
+    //     z: endQuaternion.z,
+    //     w: endQuaternion.w,
+    //     ease: "power2.out"
+    // });
 }
 
 
