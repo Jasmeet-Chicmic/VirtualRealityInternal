@@ -13,6 +13,7 @@ export default class Intersections extends EventEmitter{
     this.experience = new Experience();
     this.currentCamera = null
     this.prevCamera = null;
+   
     // this.shipTooltip = document.getElementById("shipToolTip");
     this.setUtils();
     this.setEvents();
@@ -25,6 +26,8 @@ export default class Intersections extends EventEmitter{
     this.debug = this.experience.debug;
     this.camera = this.experience.camera;
     this.id = 0;
+    this.previousMouseX = 0;
+    this.previousMouseY = 0;
     // document.body.style.cursor = "grab";
     this.isDragging = false;
     this.duration = null;
@@ -53,22 +56,65 @@ export default class Intersections extends EventEmitter{
     }
     
   }
-  setEvents(){
-    this.canvas.addEventListener("touchend", (e) => {
-      this.onClick(e);
-    })
-    this.canvas.addEventListener("mouseup", (e) => {
-     this.onClick(e);
-    })
-    this.canvas.addEventListener("mousemove", (event) => {
-      this.pointerPos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      this.pointerPos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-    })
-    this.canvas.addEventListener("touchmove", (event) => {
-      this.pointerPos.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      this.pointerPos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-    })
-  }
+  setEvents() {
+    const updatePointerPos = (x, y) => {
+        this.pointerPos.x = (x / window.innerWidth) * 2 - 1;
+        this.pointerPos.y = -(y / window.innerHeight) * 2 + 1;
+    };
+
+    const startDragging = (x, y) => {
+        this.isDragging = true;
+        this.previousMouseX = x;
+        this.previousMouseY = y;
+    };
+
+    const stopDragging = (event) => {
+        this.onClick(event);
+        this.isDragging = false;
+    };
+
+    const handleDrag = (x, y) => {
+        if (!this.isDragging) return;
+        const deltaX = x - this.previousMouseX;
+        const deltaY = y - this.previousMouseY;
+
+        this.experience.camera.instance.rotation.y -= -deltaX * 0.001;
+        this.experience.camera.instance.rotation.x -= deltaY * 0.001;
+
+        this.previousMouseX = x;
+        this.previousMouseY = y;
+    };
+
+    // Mouse Events
+    this.canvas.addEventListener("mousedown", (e) => startDragging(e.clientX, e.clientY));
+    this.canvas.addEventListener("mouseup", stopDragging);
+    this.canvas.addEventListener("mouseleave", stopDragging);
+    this.canvas.addEventListener("touchend",stopDragging)
+    this.canvas.addEventListener("mousemove", (e) => {
+        updatePointerPos(e.clientX, e.clientY);
+        handleDrag(e.clientX, e.clientY);
+    });
+
+    // Touch Events
+    this.canvas.addEventListener("touchstart", (e) => {
+        const touch = e.touches[0];
+        startDragging(touch.clientX, touch.clientY);
+    });
+
+    this.canvas.addEventListener("touchend", stopDragging);
+    this.canvas.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        updatePointerPos(touch.clientX, touch.clientY);
+        handleDrag(touch.clientX, touch.clientY);
+    });
+
+    // Scroll Event (Zoom)
+    this.canvas.addEventListener("wheel", (e) => {
+        this.camera.instance.fov = Math.max(30, Math.min(130, this.camera.instance.fov + e.deltaY * 0.005));
+        this.camera.instance.updateProjectionMatrix();
+    });
+}
+
 
   addNewEnv(path){
   
@@ -87,36 +133,23 @@ export default class Intersections extends EventEmitter{
   }
   async moveCamera(destinationPos) {
     if (this.isCameraIntersected.length > 0) {
-        // Store the previous camera for re-adding later
-       
         if (this.currentCamera) {
             this.prevCamera = this.currentCamera;
         }
 
-        // Get the new camera to move to
         this.currentCamera = this.isCameraIntersected[0].object;
-        const name =this.currentCamera.name.slice(this.currentCamera.name.length-4,this.currentCamera.name.length)
-     
-        await this.experience.world.sphere.changeTexture(EXPERIENCE.RENDERS_FOLDER_BASE+ EXPERIENCE["3DRENDER_BASE_NAME"] +name+".jpeg")
-        // Remove the current camera from intersections
+        const name = this.currentCamera.name.slice(-4);
+
+        await this.experience.world.sphere.changeTexture(
+            EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
+        );
+
+        // Remove the camera from intersections
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
         if (index > -1) {
-      
             this.experience.camerasToIntersect.splice(index, 1);
-          
-            
         }
     }
-   
-    // Compute direction to look at smoothly
-    const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
-    this.camera.controls.target.copy(new Vector3(lookAtTarget.x+0.0001,lookAtTarget.y,lookAtTarget.z));
-    // const startRotation = new THREE.Euler().copy(this.camera.instance.rotation);
-    this.camera.instance.lookAt(lookAtTarget);
-    // const endQuaternion = new THREE.Quaternion().copy(this.camera.instance.quaternion);
-
-    // // Reset to original rotation before animating
-    // this.camera.instance.rotation.copy(startRotation);
 
     gsap.to(this.camera.instance.position, {
         duration: 2,
@@ -124,32 +157,16 @@ export default class Intersections extends EventEmitter{
         y: destinationPos.y,
         z: destinationPos.z,
         onStart: () => {
-            this.camera.controls.enabled = false;
-        },
-        onUpdate: () => {
-            // Gradually update the lookAt target (rotation)
-            // this.camera.controls.target.lerp(lookAtTarget, 0.1);
-            // this.camera.controls.update();
+            
         },
         onComplete: () => {
-            this.camera.controls.enabled = true;
-     
+           
+
             this.experience.world.museum.muesumModelMesh.visible = false;
-            // this.experience.world.museum.material.opactity = 0.5;
-            // this.camera.instance.layers.set(1);
         }
     });
-
-    // Smoothly animate the rotation
-    // gsap.to(this.camera.instance.quaternion, {
-    //     duration: 2,
-    //     x: endQuaternion.x,
-    //     y: endQuaternion.y,
-    //     z: endQuaternion.z,
-    //     w: endQuaternion.w,
-    //     ease: "power2.out"
-    // });
 }
+
 
 
 

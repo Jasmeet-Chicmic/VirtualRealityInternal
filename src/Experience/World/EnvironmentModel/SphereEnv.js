@@ -66,7 +66,10 @@ export default class SphereEnv {
      * Loads a texture dynamically from a given URL and applies the transition
      */
     async changeTexture(textureUrl) {
-        const newTexture = await this.loadTexture(textureUrl);
+        this.experience.loader.showLoader()
+        try {
+            const newTexture = await this.loadTexture(textureUrl);
+            this.experience.loader.hideLoader()
         var maxanisotropy=this.experience.renderer.instance.capabilities.getMaxAnisotropy();
         newTexture.anisotropy=maxanisotropy;
         newTexture.wrapS = THREE.RepeatWrapping;
@@ -99,6 +102,11 @@ export default class SphereEnv {
             duration: 2,
             ease: "power2.out",
         });
+       
+        } catch (error) {
+            this.experience.loader.hideLoader()
+        }
+        
     }
     
     /**
@@ -137,11 +145,13 @@ export default class SphereEnv {
      * Dynamically loads a texture from a URL
      */
     loadTexture(url) {
-        return new Promise((resolve) => {
+        return new Promise((resolve,rej) => {
             const loader = new THREE.TextureLoader()
             loader.load(url, (texture) => {
                 texture.needsUpdate = true
                 resolve(texture)
+            },()=>{
+                rej("Error loading texture")
             })
         })
     }

@@ -9,6 +9,7 @@ import World from './World/World.js'
 import Resources from './Utils/Resources.js'
 
 import sources from './sources.js'
+import Loader from './Utils/Loader.js';
 
 let instance = null
 
@@ -25,7 +26,7 @@ export default class Experience
         
         // Global access
         window.experience = this
-
+        this.loader = new Loader()
         // Options
         this.canvas = _canvas
         this.camerasToIntersect = [];
@@ -35,6 +36,7 @@ export default class Experience
         this.textureLoader = new TextureLoader()
         this.sizes = new Sizes()
         this.time = new Time()
+        
         this.scene = new THREE.Scene()
         this.resources = new Resources(sources)
         this.camera = new Camera()
