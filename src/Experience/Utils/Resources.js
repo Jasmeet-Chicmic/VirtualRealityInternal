@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import EventEmitter from './EventEmitter.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import { EVENTS } from '../../Constants.js'
 export default class Resources extends EventEmitter
 {
     constructor(sources)
@@ -71,7 +72,15 @@ export default class Resources extends EventEmitter
             }
         }
     }
-
+    fetchTexture(path){
+        this.loaders.textureLoader.load(
+            path,
+            (file) =>
+            {
+              return file;
+            }
+        )
+    }
     sourceLoaded(source, file)
     {
         this.items[source.name] = file
@@ -80,7 +89,7 @@ export default class Resources extends EventEmitter
 
         if(this.loaded === this.toLoad)
         {
-            this.trigger('ready')
+            this.trigger(EVENTS.READY)
         }
     }
 }

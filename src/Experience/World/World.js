@@ -1,7 +1,9 @@
 import Experience from '../Experience.js'
 import Environment from './Environment.js'
 import Museum from "./Museum/Museum.js"
-import Intersections from "./Museum/Intersection.js"
+import Intersections from "./Museum/Intersections.js"
+import { EVENTS } from '../../Constants.js'
+import SphereEnv from './EnvironmentModel/SphereEnv.js'
 export default class World
 {
     constructor()
@@ -11,14 +13,14 @@ export default class World
         this.resources = this.experience.resources
 
         // Wait for resources
-        this.resources.on('ready', () =>
+        this.resources.on(EVENTS.READY, () =>
         {
             // Setup
-            // this.floor = new Floor()
-            // this.fox = new Fox()
+           
             this.intersectionObj = new Intersections()
             this.museum = new Museum()
             this.environment = new Environment()
+            this.sphere = new SphereEnv()
         })
     }
 

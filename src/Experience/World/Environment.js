@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../Experience.js'
 
-export default class Environment
+export default class Environment 
 {
     constructor()
     {
@@ -67,9 +67,9 @@ export default class Environment
     {
         this.environmentMap = {}
         this.environmentMap.intensity = 5
-        this.environmentMap.texture = this.resources.items.environmentMapTexture
+        this.environmentMap.texture = this.resources.items.MuseumEnv
         this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
-        this.scene.background = new THREE.Color("blue")
+        // this.scene.background = this.environmentMap.texture
         this.scene.environment = this.environmentMap.texture
 
         this.environmentMap.updateMaterials = () =>

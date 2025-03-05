@@ -1,8 +1,12 @@
 import Experience from "../../Experience";
 import gsap from "gsap";
 import * as THREE from "three";
-export default class Intersections {
+import EventEmitter from "../../Utils/EventEmitter";
+import { EVENTS, EXPERIENCE } from "../../../Constants";
+import { Vector3 } from "three";
+export default class Intersections extends EventEmitter{
   constructor() {
+    super()
     if (window.location.hash == "#add") {
       this.adminMode = true;
     }
@@ -43,6 +47,7 @@ export default class Intersections {
         this.experience.camerasToIntersect.push(this.currentCamera);
   
       }
+      
       this.moveCamera(this.isCameraIntersected[0].point);
       
     }
@@ -64,6 +69,22 @@ export default class Intersections {
       this.pointerPos.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
     })
   }
+
+  addNewEnv(path){
+  
+    
+  //  this.experience.textureLoader.load(
+  //     path,
+  //     (file) =>
+  //     {
+  //       console.log("New Loaded",file);
+        
+  //         // this.experience.scene.background = file;
+          
+  //     }
+  // )
+  this.experience.world.sphere.changeTexture(path)
+  }
   moveCamera(destinationPos) {
     if (this.isCameraIntersected.length > 0) {
         // Store the previous camera for re-adding later
@@ -74,7 +95,8 @@ export default class Intersections {
 
         // Get the new camera to move to
         this.currentCamera = this.isCameraIntersected[0].object;
-
+        const name =this.currentCamera.name.slice(this.currentCamera.name.length-4,this.currentCamera.name.length)
+        this.addNewEnv(EXPERIENCE.RENDERS_FOLDER_BASE+ EXPERIENCE["3DRENDER_BASE_NAME"] +name+".jpeg")
         // Remove the current camera from intersections
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
         if (index > -1) {
@@ -84,7 +106,7 @@ export default class Intersections {
             
         }
     }
-
+   
     // Compute direction to look at smoothly
     const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
     const startRotation = new THREE.Euler().copy(this.camera.instance.rotation);
@@ -109,8 +131,10 @@ export default class Intersections {
         },
         onComplete: () => {
             this.camera.controls.enabled = true;
-            this.camera.controls.target.copy(lookAtTarget);
+            this.camera.controls.target.copy(new Vector3(lookAtTarget.x+0.1,lookAtTarget.y,lookAtTarget.z));
             this.camera.controls.update();
+            // this.experience.world.museum.material.opactity = 0.5;
+            // this.camera.instance.layers.set(1);
         }
     });
 

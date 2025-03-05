@@ -1,6 +1,7 @@
 export const EXPERIENCE = {
     CAMERA_BASE_NAME : "DS_Cam_",
-    "3DRENDER_BASE_NAME" : "360_test.",
+    "3DRENDER_BASE_NAME" : "360_test_",
+    RENDERS_FOLDER_BASE:"textures/environmentMap/MuseumEnv/",
     RENDER_AND_CAMERA_IDs:{
        '0000':"0000",
        '0001':"0001",
@@ -15,3 +16,10 @@ export const EXPERIENCE = {
    
     }
    }
+
+
+export const EVENTS = {
+   READY:"ready",
+   ON_NODE_SELECT:"onNodeSelect",
+
+}

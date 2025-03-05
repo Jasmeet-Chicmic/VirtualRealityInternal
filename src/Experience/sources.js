@@ -23,6 +23,16 @@ export default [
         path: 'textures/dirt/normal.jpg'
     },
     {
+        name: 'MuseumEnv',
+        type: 'texture',
+        path: 'textures/environmentMap/MuseumEnv/360_test_0000.jpeg'
+    },
+    {
+        name: 'NewMuseumEnv',
+        type: 'texture',
+        path: 'textures/environmentMap/MuseumEnv/360_test_0001.jpeg'
+    },
+    {
         name: 'foxModel',
         type: 'gltfModel',
         path: 'models/Fox/glTF/Fox.gltf'

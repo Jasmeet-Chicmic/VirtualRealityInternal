@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import {Raycaster,Vector2} from 'three';
+import {Raycaster,Vector2,TextureLoader} from 'three';
 import Debug from './Utils/Debug.js'
 import Sizes from './Utils/Sizes.js'
 import Time from './Utils/Time.js'
@@ -32,6 +32,7 @@ export default class Experience
         // Setup
         this.pointerPos = new Vector2(0, 0);
         this.debug = new Debug()
+        this.textureLoader = new TextureLoader()
         this.sizes = new Sizes()
         this.time = new Time()
         this.scene = new THREE.Scene()
