@@ -14,6 +14,10 @@ export const EXPERIENCE = {
        '0008':"0008",
        '0009':"0009",
    
+    },
+    CAMERA_FOV:{
+      MAX_LIMIT:100,
+      MIN_LIMIT:60
     }
    }
 

@@ -57,6 +57,8 @@ export default class Intersections extends EventEmitter{
     
   }
   setEvents() {
+    let pitchAngle = 0; // Track vertical rotation (in radians)
+
     const updatePointerPos = (x, y) => {
         this.pointerPos.x = (x / window.innerWidth) * 2 - 1;
         this.pointerPos.y = -(y / window.innerHeight) * 2 + 1;
@@ -75,11 +77,30 @@ export default class Intersections extends EventEmitter{
 
     const handleDrag = (x, y) => {
         if (!this.isDragging) return;
+
         const deltaX = x - this.previousMouseX;
         const deltaY = y - this.previousMouseY;
 
-        this.experience.camera.instance.rotation.y -= -deltaX * 0.001;
-        this.experience.camera.instance.rotation.x -= deltaY * 0.001;
+        const camera = this.experience.camera.instance;
+
+        // Yaw (left/right) - Rotate around world Y-axis
+        const yaw = new THREE.Quaternion();
+        yaw.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -deltaX * 0.002);
+
+        // Calculate new pitch angle
+        let newPitchAngle = pitchAngle - deltaY * 0.002; // Adjust sensitivity
+        newPitchAngle = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, newPitchAngle)); // Clamp between -90° and 90°
+
+        // Pitch (up/down) - Rotate around local X-axis
+        const pitch = new THREE.Quaternion();
+        pitch.setFromAxisAngle(new THREE.Vector3(1, 0, 0), newPitchAngle - pitchAngle);
+
+        // Apply rotations
+        camera.quaternion.multiplyQuaternions(yaw, camera.quaternion);
+        camera.quaternion.multiplyQuaternions(camera.quaternion, pitch);
+
+        // Update stored pitch angle
+        pitchAngle = newPitchAngle;
 
         this.previousMouseX = x;
         this.previousMouseY = y;
@@ -89,7 +110,6 @@ export default class Intersections extends EventEmitter{
     this.canvas.addEventListener("mousedown", (e) => startDragging(e.clientX, e.clientY));
     this.canvas.addEventListener("mouseup", stopDragging);
     this.canvas.addEventListener("mouseleave", stopDragging);
-    this.canvas.addEventListener("touchend",stopDragging)
     this.canvas.addEventListener("mousemove", (e) => {
         updatePointerPos(e.clientX, e.clientY);
         handleDrag(e.clientX, e.clientY);
@@ -110,10 +130,13 @@ export default class Intersections extends EventEmitter{
 
     // Scroll Event (Zoom)
     this.canvas.addEventListener("wheel", (e) => {
-        this.camera.instance.fov = Math.max(30, Math.min(130, this.camera.instance.fov + e.deltaY * 0.005));
+        this.camera.instance.fov = Math.max(EXPERIENCE.CAMERA_FOV.MIN_LIMIT, Math.min(EXPERIENCE.CAMERA_FOV.MAX_LIMIT, this.camera.instance.fov + e.deltaY * 0.005));
         this.camera.instance.updateProjectionMatrix();
     });
 }
+
+
+
 
 
   addNewEnv(path){

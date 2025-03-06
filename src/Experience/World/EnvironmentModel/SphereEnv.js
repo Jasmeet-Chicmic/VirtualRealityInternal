@@ -75,7 +75,7 @@ export default class SphereEnv {
         newTexture.wrapS = THREE.RepeatWrapping;
         newTexture.encoding=THREE.sRGBEncoding;
         newTexture.needsUpdate=true;
-        // newTexture.repeat.x = -1;
+        newTexture.repeat.x = -1;
         if (!this.currentSphere) {
             this.currentSphere = this.createSphere(newTexture, 1); // If no sphere exists, create first one
             return;
