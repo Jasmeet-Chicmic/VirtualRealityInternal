@@ -74,6 +74,7 @@ export default class Museum
                 child.material.transparent=true
                 let helper = new VertexNormalsHelper( child, 1.0, 0xff0000, 1 );
                 child.material.side = DoubleSide
+                child.material.color.setHex(0x00ffff)
                 child.layers.enable(1)
                 // child.material.opacity=0.5  
                 // child.add( helper );
