@@ -17,6 +17,8 @@ export default class Museum
         this.debug = this.experience.debug
         this.muesumModelMesh = null;
         this.firstCamera = null
+  
+    
         // Debug
         if(this.debug.active)
         {
@@ -50,6 +52,7 @@ export default class Museum
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
         this.model.rotation.y = -Math.PI / 2
+        
         this.scene.add(this.model)
 
         console.log("this,model",this.model);
@@ -71,7 +74,7 @@ export default class Museum
                 child.material.transparent=true
                 let helper = new VertexNormalsHelper( child, 1.0, 0xff0000, 1 );
                 child.material.side = DoubleSide
-                child.geometry.computeVertexNormals();
+                child.layers.enable(1)
                 // child.material.opacity=0.5  
                 // child.add( helper );
                 // child.renderOrder=0
@@ -102,11 +105,11 @@ export default class Museum
         this.debugFolder.add(this.model.position, 'x').name("wholeX").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.model.position, 'y').name("wholeY").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.model.position, 'z').name("wholeZ").min(-1000).max(1000).step(0.01);
-        this.debugFolder.add(this.muesumModelMesh.material, 'opacity').min(0).max(1).step(0.01);}
+        this.debugFolder.add(this.muesumModelMesh.material, 'opacity').min(0).max(1).step(0.01);
         this.debugFolder.add(this.prop,'scale').min(0.1).max(10).step(0.01).onChange(()=>{
             this.muesumModelMesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)
         });
-     
+    }
     }
     setAnimation()
     {

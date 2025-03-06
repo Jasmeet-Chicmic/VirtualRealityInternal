@@ -28,6 +28,7 @@ export default class Environment
         this.sunLight.shadow.mapSize.set(1024, 1024)
         this.sunLight.shadow.normalBias = 0.05
         this.sunLight.position.set(0.6, 2,2.5)
+        this.sunLight.layers.enable(1)
         this.scene.add(this.sunLight)
 
         // Debug
@@ -67,8 +68,8 @@ export default class Environment
     {
         this.environmentMap = {}
         this.environmentMap.intensity = 5
-        // this.environmentMap.texture = this.resources.items.MuseumEnv
-        // this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
+        this.environmentMap.texture = this.resources.items.MuseumEnv
+        this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
         // this.scene.background = this.environmentMap.texture
         this.scene.background = new THREE.Color('white')
         // this.scene.environment = this.environmentMap.texture

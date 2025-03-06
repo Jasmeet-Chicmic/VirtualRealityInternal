@@ -17,6 +17,11 @@ export default class Intersections extends EventEmitter{
     // this.shipTooltip = document.getElementById("shipToolTip");
     this.setUtils();
     this.setEvents();
+    this.initialAnimation()
+  }
+  initialAnimation(){
+
+    this.moveCamera(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
   }
 
   setUtils() {
@@ -52,7 +57,7 @@ export default class Intersections extends EventEmitter{
   
       }
       
-      this.moveCamera(this.isCameraIntersected[0].point);
+      this.moveCamera(this.isCameraIntersected[0].object,this.isCameraIntersected[0].point);
       
     }
     
@@ -185,26 +190,42 @@ export default class Intersections extends EventEmitter{
   // )
 
   }
-  async moveCamera(destinationPos) {
-    if (this.isCameraIntersected.length > 0) {
+  async moveCamera(node,destinationPos,initialRotation=false) {
+        if(initialRotation){
+          this.camera.instance.layers.set(1);
+        }
         if (this.currentCamera) {
             this.prevCamera = this.currentCamera;
         }
 
-        this.currentCamera = this.isCameraIntersected[0].object;
+        this.currentCamera = node;
         const name = this.currentCamera.name.slice(-4);
-
+        console.log("testing",EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg");
+        
         await this.experience.world.sphere.changeTexture(
             EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
         );
 
-        // Remove the camera from intersections
+     
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
         if (index > -1) {
             this.experience.camerasToIntersect.splice(index, 1);
         }
-    }
-
+        let endQuaternion = 0;
+        if(initialRotation){
+          
+        const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
+        const startRotation = new THREE.Euler().copy(this.camera.instance.rotation);
+        this.camera.instance.lookAt(lookAtTarget);
+         endQuaternion = new THREE.Quaternion().copy(this.camera.instance.quaternion);
+    
+        // Reset to original rotation before animating
+        this.camera.instance.rotation.copy(startRotation);
+      }
+    
+      
+   
+      
     gsap.to(this.camera.instance.position, {
         duration: 2,
         x: destinationPos.x,
@@ -215,10 +236,20 @@ export default class Intersections extends EventEmitter{
         },
         onComplete: () => {
            
-
-            // this.experience.world.museum.muesumModelMesh.visible = false;
+          this.camera.instance.layers.set(0);
+            this.experience.world.museum.muesumModelMesh.visible = false;
+           
         }
     });
+    if(initialRotation){
+    gsap.to(this.camera.instance.quaternion, {
+      duration: 2,
+      x: endQuaternion.x,
+      y: endQuaternion.y,
+      z: endQuaternion.z,
+      w: endQuaternion.w,
+      ease: "power2.out"
+  });}
 }
 
 

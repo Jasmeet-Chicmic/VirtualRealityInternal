@@ -18,7 +18,7 @@ export default class SphereEnv {
             }
         this.setGeometry()
         this.setMaterial()
-        this.setMesh()
+      
     }
 
     setGeometry() {
@@ -29,24 +29,11 @@ export default class SphereEnv {
         this.material = new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 1
+            opacity: 0
         })
     }
 
-    setMesh() {
-        this.mesh = new THREE.Mesh(this.geometry, this.material)
-        // this.mesh.position.copy(this.experience.camera.instance.position)
-        // this.mesh.layers.set(1) // Render after the skybox
-        this.scene.add(this.mesh)
-        // this.mesh.renderOrder = 1
-        let value = 0
-            this.changeTexture(`textures/environmentMap/MuseumEnv/360_test_000${value++%2}.jpeg`)
-        
-        this.addDebugProp()
-        // setInterval(()=>{
-        //     this.changeTexture(`textures/environmentMap/MuseumEnv/360_test_000${value++%2}.jpeg`)
-        // },10000)
-    }
+
     addDebugProp(){
         if(this.debugFolder){
             this.prop = {
@@ -123,9 +110,9 @@ export default class SphereEnv {
         });
     
         const sphere = new THREE.Mesh(this.geometry, material);
-        sphere.position.copy(this.mesh.position); // Place new sphere at the same position
+        sphere.position.set(0,0,0); // Place new sphere at the same position
         this.scene.add(sphere);
-    
+        
         return sphere;
     }
     
