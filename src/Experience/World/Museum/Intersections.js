@@ -233,12 +233,15 @@ export default class Intersections extends EventEmitter{
         y: destinationPos.y,
         z: destinationPos.z,
         onStart: () => {
-          this.experience.world.museum.muesumModelMesh.visible = true;
+          this.experience.world.museum.muesumModelMesh.material.colorWrite = true;
+        },
+        onUpdate:()=>{
+          this.checkInterSections()
         },
         onComplete: () => {
            
           this.camera.instance.layers.set(0);
-            this.experience.world.museum.muesumModelMesh.visible = false;
+          this.experience.world.museum.muesumModelMesh.material.colorWrite = false;
            
         }
     });

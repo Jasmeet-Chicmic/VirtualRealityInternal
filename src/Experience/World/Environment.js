@@ -71,7 +71,7 @@ export default class Environment
         this.environmentMap.texture = this.resources.items.MuseumEnv
         this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
         // this.scene.background = this.environmentMap.texture
-        this.scene.background = new THREE.Color('black')
+        this.scene.background = new THREE.Color('white')
         // this.scene.environment = this.environmentMap.texture
 
         this.environmentMap.updateMaterials = () =>
@@ -98,6 +98,7 @@ export default class Environment
                 .max(4)
                 .step(0.001)
                 .onChange(this.environmentMap.updateMaterials)
+                this.debugFolder.close()
         }
     }
 }

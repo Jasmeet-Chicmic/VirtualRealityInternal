@@ -47,6 +47,7 @@ export default class SphereEnv {
             this.mesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)
         });
         this.debugFolder.add(this.material, 'opacity').min(0).max(1).step(0.01);}
+        this.debugFolder.close()
     }
 
     /**
@@ -115,14 +116,14 @@ export default class SphereEnv {
             side: THREE.BackSide,
             transparent: true,
             opacity: initialOpacity,
-          
+            
             
         });
     
         const sphere = new THREE.Mesh(this.geometry, material);
         sphere.position.set(0,0,0); // Place new sphere at the same position
         this.scene.add(sphere);
-        
+      
         return sphere;
     }
     

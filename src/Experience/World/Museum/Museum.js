@@ -17,7 +17,7 @@ export default class Museum
         this.debug = this.experience.debug
         this.muesumModelMesh = null;
         this.firstCamera = null
-  
+        this.positionBoxMesh = null
     
         // Debug
         if(this.debug.active)
@@ -35,12 +35,14 @@ export default class Museum
 
     createDebugCameraIndicator(position,name){
         const box = new BoxGeometry(0.1,0.1,0.1)
-        const material = new THREE.MeshBasicMaterial({ color: "red" })
+        const material = new THREE.MeshBasicMaterial({ color: "red",transparent:true })
         const cube = new THREE.Mesh(box, material)
+        
         cube.position.set(position.x, position.y, position.z)
         cube.name = name
         // cube.layers.enable(1)
-  
+        cube.renderOrder = 3
+        this.positionBoxMesh = cube
         this.scene.add(cube)
         this.camerasToIntersect.push(cube)
     }
@@ -76,8 +78,10 @@ export default class Museum
                 child.material.side = DoubleSide
                 child.material.color.setHex(0x00ffff)
                 child.layers.enable(1)
-            
-                // child.material.depthWrite = false
+                child.colorWrite = false
+                child.renderOrder = 2
+                child.material.depthWrite = true
+
                 // child.material.depthTest = true
                 // child.material.blending = THREE.NormalBlending,
                 this.experience.museumPartsToIntersect = child
@@ -98,6 +102,7 @@ export default class Museum
         this.prop = {
             scale:0
         }
+        this.debugFolder.close()
         this.debugFolder.add(this.muesumModelMesh.position, 'x').min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.position, 'y').min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.position, 'z').min(-1000).max(1000).step(0.01);
@@ -106,9 +111,12 @@ export default class Museum
         this.debugFolder.add(this.model.position, 'z').name("wholeZ").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.material, 'opacity').min(0).max(1).step(0.01);
         this.debugFolder.add(this.muesumModelMesh, 'visible').name("visible");
+     
         this.debugFolder.add(this.prop,'scale').min(0.1).max(10).step(0.01).onChange(()=>{
             this.muesumModelMesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)
         });
+        this.debugFolder.add(this.muesumModelMesh,"renderOrder").name("MusuemRenderorder").min(0).max(10).step(1);
+        this.debugFolder.add(this.positionBoxMesh,"renderOrder").name("positionBoxMesh").min(0).max(10).step(1);
     }
     }
     setAnimation()
@@ -152,6 +160,7 @@ export default class Museum
             this.debugFolder.add(debugObject, 'playIdle')
             this.debugFolder.add(debugObject, 'playWalking')
             this.debugFolder.add(debugObject, 'playRunning')
+        
         }
     }
 

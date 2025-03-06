@@ -80,6 +80,7 @@ export default class Fox
             this.debugFolder.add(debugObject, 'playIdle')
             this.debugFolder.add(debugObject, 'playWalking')
             this.debugFolder.add(debugObject, 'playRunning')
+            this.debugFolder.close()
         }
     }
 
