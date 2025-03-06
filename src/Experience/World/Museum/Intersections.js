@@ -202,9 +202,10 @@ export default class Intersections extends EventEmitter{
         const name = this.currentCamera.name.slice(-4);
         console.log("testing",EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg");
         
-        await this.experience.world.sphere.changeTexture(
+        const tex = await this.experience.world.sphere.loadNewTexture(
             EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
         );
+        
 
      
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
@@ -225,14 +226,14 @@ export default class Intersections extends EventEmitter{
     
       
    
-      
+      this.experience.world.sphere.changeTexture(tex);
     gsap.to(this.camera.instance.position, {
         duration: 2,
         x: destinationPos.x,
         y: destinationPos.y,
         z: destinationPos.z,
         onStart: () => {
-            
+          this.experience.world.museum.muesumModelMesh.visible = true;
         },
         onComplete: () => {
            

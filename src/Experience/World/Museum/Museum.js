@@ -40,7 +40,7 @@ export default class Museum
         cube.position.set(position.x, position.y, position.z)
         cube.name = name
         // cube.layers.enable(1)
-        
+  
         this.scene.add(cube)
         this.camerasToIntersect.push(cube)
     }
@@ -76,9 +76,7 @@ export default class Museum
                 child.material.side = DoubleSide
                 child.material.color.setHex(0x00ffff)
                 child.layers.enable(1)
-                // child.material.opacity=0.5  
-                // child.add( helper );
-                // child.renderOrder=0
+            
                 // child.material.depthWrite = false
                 // child.material.depthTest = true
                 // child.material.blending = THREE.NormalBlending,
@@ -107,6 +105,7 @@ export default class Museum
         this.debugFolder.add(this.model.position, 'y').name("wholeY").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.model.position, 'z').name("wholeZ").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.muesumModelMesh.material, 'opacity').min(0).max(1).step(0.01);
+        this.debugFolder.add(this.muesumModelMesh, 'visible').name("visible");
         this.debugFolder.add(this.prop,'scale').min(0.1).max(10).step(0.01).onChange(()=>{
             this.muesumModelMesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)
         });

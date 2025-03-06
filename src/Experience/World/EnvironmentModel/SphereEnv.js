@@ -52,25 +52,39 @@ export default class SphereEnv {
     /**
      * Loads a texture dynamically from a given URL and applies the transition
      */
-    async changeTexture(textureUrl) {
-        this.experience.loader.showLoader()
+    async loadNewTexture(textureUrl) {
+        this.experience.loader.showLoader();
         try {
             const newTexture = await this.loadTexture(textureUrl);
-            this.experience.loader.hideLoader()
-        var maxanisotropy=this.experience.renderer.instance.capabilities.getMaxAnisotropy();
-        newTexture.anisotropy=maxanisotropy;
-        newTexture.wrapS = THREE.RepeatWrapping;
-        newTexture.encoding=THREE.sRGBEncoding;
-        newTexture.needsUpdate=true;
-        newTexture.repeat.x = -1;
+            this.experience.loader.hideLoader();
+    
+            // Apply texture settings
+            var maxAnisotropy = this.experience.renderer.instance.capabilities.getMaxAnisotropy();
+            newTexture.anisotropy = maxAnisotropy;
+            newTexture.wrapS = THREE.RepeatWrapping;
+            newTexture.encoding = THREE.sRGBEncoding;
+            newTexture.needsUpdate = true;
+            newTexture.repeat.x = -1;
+    
+            return newTexture;
+        } catch (error) {
+            this.experience.loader.hideLoader();
+            console.error("Error loading texture:", error);
+            return null;
+        }
+    }
+    
+    changeTexture(newTexture) {
+        if (!newTexture) return;
+    
         if (!this.currentSphere) {
-            this.currentSphere = this.createSphere(newTexture, 1); // If no sphere exists, create first one
+            this.currentSphere = this.createSphere(newTexture, 1); // Create first sphere
             return;
         }
     
         // Create a new sphere with the new texture, start with opacity 0
         const newSphere = this.createSphere(newTexture, 0);
-        
+    
         // Animate transition: old sphere fades out, new sphere fades in
         gsap.to(this.currentSphere.material, {
             opacity: 0,
@@ -86,15 +100,11 @@ export default class SphereEnv {
     
         gsap.to(newSphere.material, {
             opacity: 1,
-            duration: 2,
+            duration:4,
             ease: "power2.out",
         });
-       
-        } catch (error) {
-            this.experience.loader.hideLoader()
-        }
-        
     }
+    
     
     /**
      * Creates a new sphere with a given texture and opacity.
@@ -105,7 +115,7 @@ export default class SphereEnv {
             side: THREE.BackSide,
             transparent: true,
             opacity: initialOpacity,
-            emisiveIntensity: 0.2
+          
             
         });
     
