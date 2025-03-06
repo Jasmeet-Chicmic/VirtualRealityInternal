@@ -30,6 +30,7 @@ export default class Experience
         // Options
         this.canvas = _canvas
         this.camerasToIntersect = [];
+        this.museumPartsToIntersect = null
         // Setup
         this.pointerPos = new Vector2(0, 0);
         this.debug = new Debug()

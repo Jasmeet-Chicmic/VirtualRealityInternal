@@ -69,15 +69,16 @@ export default class Museum
                 // child.material.transparent = true;
                 // child.material.opactiy = 0.1;
                 child.material.transparent=true
-                // let helper = new VertexNormalsHelper( child, 1.0, 0xff0000, 1 );
-                child.material.side = BackSide
+                let helper = new VertexNormalsHelper( child, 1.0, 0xff0000, 1 );
+                child.material.side = DoubleSide
+                child.geometry.computeVertexNormals();
                 // child.material.opacity=0.5  
                 // child.add( helper );
                 // child.renderOrder=0
                 // child.material.depthWrite = false
                 // child.material.depthTest = true
                 // child.material.blending = THREE.NormalBlending,
-                
+                this.experience.museumPartsToIntersect = child
                 this.muesumModelMesh = child
                 
                 // child.material.depthWrite = false

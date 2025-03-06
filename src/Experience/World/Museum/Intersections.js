@@ -25,6 +25,7 @@ export default class Intersections extends EventEmitter{
     this.canvas = this.experience.canvas;
     this.debug = this.experience.debug;
     this.camera = this.experience.camera;
+    this.circle = this.experience.world.circle.mesh
     this.id = 0;
     this.previousMouseX = 0;
     this.previousMouseY = 0;
@@ -56,12 +57,42 @@ export default class Intersections extends EventEmitter{
     }
     
   }
+  setCirclePos(intersects) {
+    if (intersects.length === 0) return;
+
+    const pointOfIntersection = intersects[0].point;
+        const normal = intersects[0].face.normal;
+
+        const offset = normal.clone().multiplyScalar(0.02);
+        this.circle.position.copy(pointOfIntersection).add(offset);
+        // this.circle.position.copy(pointOfIntersection);
+
+       
+        this.circle.lookAt(this.circle.position.clone().add(normal));
+}
+
+
+
+  checkInterSections(){
+    this.raycaster.setFromCamera(this.pointerPos, this.camera.instance);
+    this.isCameraIntersected = this.raycaster.intersectObjects(
+      this.experience.camerasToIntersect
+    );
+
+    const intersects = this.raycaster.intersectObject(this.experience.museumPartsToIntersect);
+
+  if (intersects.length > 0) {
+    // const point = intersects[0].point;
+    this.setCirclePos(intersects)
+  }
+  }
   setEvents() {
     let pitchAngle = 0; // Track vertical rotation (in radians)
 
     const updatePointerPos = (x, y) => {
         this.pointerPos.x = (x / window.innerWidth) * 2 - 1;
         this.pointerPos.y = -(y / window.innerHeight) * 2 + 1;
+        this.checkInterSections()
     };
 
     const startDragging = (x, y) => {
@@ -185,7 +216,7 @@ export default class Intersections extends EventEmitter{
         onComplete: () => {
            
 
-            this.experience.world.museum.muesumModelMesh.visible = false;
+            // this.experience.world.museum.muesumModelMesh.visible = false;
         }
     });
 }
@@ -429,10 +460,7 @@ export default class Intersections extends EventEmitter{
 
   update() {
  
-    this.raycaster.setFromCamera(this.pointerPos, this.camera.instance);
-    this.isCameraIntersected = this.raycaster.intersectObjects(
-      this.experience.camerasToIntersect
-    );
+   
     
     
    
