@@ -17,7 +17,7 @@ export default class Museum
         this.debug = this.experience.debug
         this.muesumModelMesh = null;
         this.firstCamera = null
-        this.positionBoxMesh = null
+     
     
         // Debug
         if(this.debug.active)
@@ -34,17 +34,14 @@ export default class Museum
     }
 
     createDebugCameraIndicator(position,name){
-        const box = new BoxGeometry(0.1,0.1,0.1)
-        const material = new THREE.MeshBasicMaterial({ color: "red",transparent:true })
-        const cube = new THREE.Mesh(box, material)
-        
-        cube.position.set(position.x, position.y, position.z)
-        cube.name = name
+      
+        const cube = this.experience.world.movementIndicators.createNewMesh(position,name)
+    
         // cube.layers.enable(1)
-        cube.renderOrder = 3
-        this.positionBoxMesh = cube
-        this.scene.add(cube)
-        this.camerasToIntersect.push(cube)
+       
+     
+      
+       
     }
     setModel()
     {
@@ -118,7 +115,7 @@ export default class Museum
             this.muesumModelMesh.scale.set(this.prop.scale,this.prop.scale,this.prop.scale)
         });
         this.debugFolder.add(this.muesumModelMesh,"renderOrder").name("MusuemRenderorder").min(0).max(10).step(1);
-        this.debugFolder.add(this.positionBoxMesh,"renderOrder").name("positionBoxMesh").min(0).max(10).step(1);
+       
     }
     }
     setAnimation()
@@ -170,7 +167,7 @@ export default class Museum
         this.muesumModelMesh.material.colorWrite = false
     }
     enableMusuemMesh(){
-        this.muesumModelMesh.material.colorWrite= true
+        // this.muesumModelMesh.material.colorWrite= true
     }
     update()
     {

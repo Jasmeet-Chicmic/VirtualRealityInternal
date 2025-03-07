@@ -167,8 +167,9 @@ export default class Intersections extends EventEmitter{
 
     // Scroll Event (Zoom)
     this.canvas.addEventListener("wheel", (e) => {
-        this.camera.instance.fov = Math.max(EXPERIENCE.CAMERA_FOV.MIN_LIMIT, Math.min(EXPERIENCE.CAMERA_FOV.MAX_LIMIT, this.camera.instance.fov + e.deltaY * 0.005));
-        this.camera.instance.updateProjectionMatrix();
+        const value= Math.max(EXPERIENCE.CAMERA_FOV.MIN_LIMIT, Math.min(EXPERIENCE.CAMERA_FOV.MAX_LIMIT, this.camera.instance.fov + e.deltaY * 0.005));
+        this.camera.updateFov(value);
+        
     });
 }
 
@@ -234,6 +235,7 @@ export default class Intersections extends EventEmitter{
         onStart: () => {
           this.experience.world.museum.enableMusuemMesh()
           this.experience.world.circle.disableCircle()
+          this.experience.world.movementIndicators.disableAllIndicators()
         },
         onUpdate:()=>{
           // this.checkInterSections()
@@ -242,8 +244,9 @@ export default class Intersections extends EventEmitter{
           this.camera.setCameraLayer(0)
           this.experience.world.museum.disableMusuemMesh()
           this.experience.world.circle.enableCircle()
-           
-        }
+          this.experience.world.movementIndicators.enableAllIndicators()
+        },
+        ease: "power2.inout",
     });
     if(initialRotation){
     gsap.to(this.camera.instance.quaternion, {

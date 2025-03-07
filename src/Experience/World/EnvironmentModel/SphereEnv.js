@@ -29,7 +29,8 @@ export default class SphereEnv {
         this.material = new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0
+            opacity: 0,
+            
         })
     }
 
@@ -87,23 +88,42 @@ export default class SphereEnv {
         const newSphere = this.createSphere(newTexture, 0);
     
         // Animate transition: old sphere fades out, new sphere fades in
-        gsap.to(this.currentSphere.material, {
-            opacity: 0,
+        gsap.to(this.experience.camera.instance, {
+            fov: this.experience.camera.instance.fov * 0.9, // Simulate depth zoom in
             duration: 2,
-            ease: "power2.out",
-            onComplete: () => {
-                this.scene.remove(this.currentSphere); // Remove old sphere
+            onUpdate: () => {
+                this.experience.camera.instance.updateProjectionMatrix();
+            },
+            onComplete:()=>{
+               this.experience.camera.resetFov()
+                this.experience.camera.instance.updateProjectionMatrix();
                 this.currentSphere.geometry.dispose();
                 this.currentSphere.material.dispose();
-                this.currentSphere = newSphere; // Set new sphere as current
-            }
-        });
-    
-        gsap.to(newSphere.material, {
-            opacity: 1,
-            duration:4,
+                this.currentSphere = newSphere;
+            },
             ease: "power2.out",
         });
+        gsap.to(newSphere.material, {
+           
+            opacity: 1,
+            duration: 2,
+            ease: "power2.out",
+        });
+        // Fade out old sphere
+        // gsap.to(this.currentSphere.material, {
+        //     opacity: 0,
+        //     duration: 2,
+        //     ease: "power2.out",
+        //     onComplete: () => {
+        //         this.scene.remove(this.currentSphere);
+        //         this.currentSphere.geometry.dispose();
+        //         this.currentSphere.material.dispose();
+        //         this.currentSphere = newSphere;
+        //     }
+        // });
+        
+        // Fade in new sphere
+        
     }
     
     

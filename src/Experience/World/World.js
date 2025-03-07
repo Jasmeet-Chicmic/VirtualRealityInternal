@@ -5,6 +5,7 @@ import Intersections from "./Museum/Intersections.js"
 import { EVENTS } from '../../Constants.js'
 import SphereEnv from './EnvironmentModel/SphereEnv.js'
 import Circle from './Circle/Circle.js'
+import MovementIndicators from './MovementIndicators/MovementIndicators.js'
 export default class World
 {
     constructor()
@@ -18,6 +19,7 @@ export default class World
         {
             // Setup
            
+            this.movementIndicators = new MovementIndicators()
             this.sphere = new SphereEnv()
             this.museum = new Museum()
             this.circle = new Circle()

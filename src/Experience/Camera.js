@@ -11,6 +11,7 @@ export default class Camera
         this.scene = this.experience.scene
         this.canvas = this.experience.canvas
         this.debug = this.experience.debug
+        this.currentFov = 100
         if(this.debug.active)
             {
                 this.debugFolder = this.debug.ui.addFolder('Camera')
@@ -54,6 +55,20 @@ export default class Camera
     }
     setCameraLayer(layer=0){
         this.instance.layers.set(layer)
+    }
+    changeFov(fov){
+        this.instance.fov = fov
+        this.instance.updateProjectionMatrix()
+    }
+    updateFov(value){
+        this.currentFov = value
+        this.instance.fov=value 
+
+    this.instance.updateProjectionMatrix()
+    }
+    resetFov(){
+        this.instance.fov = this.currentFov;
+        this.instance.updateProjectionMatrix()
     }
     update()
     {
