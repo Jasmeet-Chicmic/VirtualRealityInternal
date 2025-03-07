@@ -52,6 +52,9 @@ export default class Camera
     }
      
     }
+    setCameraLayer(layer=0){
+        this.instance.layers.set(layer)
+    }
     update()
     {
         // this.controls.update()

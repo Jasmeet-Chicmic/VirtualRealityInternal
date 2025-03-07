@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import Experience from './Experience.js'
 import { ACESFilmicToneMapping } from 'three'
-
+import { VRButton } from 'three/addons/webxr/VRButton.js';
 export default class Renderer
 {
     constructor()

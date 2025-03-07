@@ -18,6 +18,7 @@ export default class Intersections extends EventEmitter{
     this.setUtils();
     this.setEvents();
     this.initialAnimation()
+   
   }
   initialAnimation(){
 
@@ -30,7 +31,8 @@ export default class Intersections extends EventEmitter{
     this.canvas = this.experience.canvas;
     this.debug = this.experience.debug;
     this.camera = this.experience.camera;
-    this.circle = this.experience.world.circle.mesh
+    this.circle = this.experience.world.circle
+    this.muesumModelMesh = this.experience.world.museum.muesumModelMesh
     this.id = 0;
     this.previousMouseX = 0;
     this.previousMouseY = 0;
@@ -47,10 +49,7 @@ export default class Intersections extends EventEmitter{
 
  
     if(this.isCameraIntersected.length > 0){
-      console.log("OnClick",this.isCameraIntersected[0].object);
-     
-    
-      
+
       if(this.currentCamera !=null ){
 
         this.experience.camerasToIntersect.push(this.currentCamera);
@@ -65,16 +64,18 @@ export default class Intersections extends EventEmitter{
   setCirclePos(intersects) {
     if (intersects.length === 0) return;
 
-    const pointOfIntersection = intersects[0].point;
-        const normal = intersects[0].face.normal;
-
-        const offset = normal.clone().multiplyScalar(0.02);
-        this.circle.position.copy(pointOfIntersection).add(offset);
-        // this.circle.position.copy(pointOfIntersection);
-
-       
-        this.circle.lookAt(this.circle.position.clone().add(normal));
+    const point = intersects[0].point;
+    const normalMatrix = new THREE.Matrix3().getNormalMatrix(this.experience.world.museum.muesumModelMesh.matrixWorld);
+    //fetching matrix of model to convert the normal vector to world coordinates, matrix means The transformation matrix that moves the model into the scene
+    const n = intersects[0].face.normal.clone().applyNormalMatrix(normalMatrix);
+    const up = new THREE.Vector3(0, 0, 1); 
+    const quaternion = new THREE.Quaternion().setFromUnitVectors(up, n);
+    this.circle.updatePositionAndRotation(point,quaternion)
+   this.circle.updatePositionOfDebugNormalMesh(point,n)
 }
+
+
+
 
 
 
@@ -192,7 +193,7 @@ export default class Intersections extends EventEmitter{
   }
   async moveCamera(node,destinationPos,initialRotation=false) {
         if(initialRotation){
-          this.camera.instance.layers.set(1);
+          this.camera.setCameraLayer(1)
         }
         if (this.currentCamera) {
             this.prevCamera = this.currentCamera;
@@ -200,8 +201,6 @@ export default class Intersections extends EventEmitter{
 
         this.currentCamera = node;
         const name = this.currentCamera.name.slice(-4);
-        console.log("testing",EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg");
-        
         const tex = await this.experience.world.sphere.loadNewTexture(
             EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
         );
@@ -233,15 +232,16 @@ export default class Intersections extends EventEmitter{
         y: destinationPos.y,
         z: destinationPos.z,
         onStart: () => {
-          this.experience.world.museum.muesumModelMesh.material.colorWrite = true;
+          this.experience.world.museum.enableMusuemMesh()
+          this.experience.world.circle.disableCircle()
         },
         onUpdate:()=>{
-          this.checkInterSections()
+          // this.checkInterSections()
         },
         onComplete: () => {
-           
-          this.camera.instance.layers.set(0);
-          this.experience.world.museum.muesumModelMesh.material.colorWrite = false;
+          this.camera.setCameraLayer(0)
+          this.experience.world.museum.disableMusuemMesh()
+          this.experience.world.circle.enableCircle()
            
         }
     });

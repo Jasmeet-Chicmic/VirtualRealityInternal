@@ -4,7 +4,7 @@ import Experience from '../../Experience.js'
 import { BoxGeometry } from 'three'
 import { DoubleSide } from 'three'
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
-import { BackSide } from 'three'
+
 export default class Museum
 {
     constructor()
@@ -74,14 +74,16 @@ export default class Museum
                 // child.material.transparent = true;
                 // child.material.opactiy = 0.1;
                 child.material.transparent=true
-                let helper = new VertexNormalsHelper( child, 1.0, 0xff0000, 1 );
+                // let helper = new VertexNormalsHelper( child, 1.0, 0xffff00, 1 );
+                // this.scene.add( helper );
                 child.material.side = DoubleSide
                 child.material.color.setHex(0x00ffff)
                 child.layers.enable(1)
                 child.colorWrite = false
                 child.renderOrder = 2
                 child.material.depthWrite = true
-
+                // child.geometry.computeFaceNormals()
+                // child.geometry.computeVertexNormals()
                 // child.material.depthTest = true
                 // child.material.blending = THREE.NormalBlending,
                 this.experience.museumPartsToIntersect = child
@@ -164,6 +166,12 @@ export default class Museum
         }
     }
 
+    disableMusuemMesh(){
+        this.muesumModelMesh.material.colorWrite = false
+    }
+    enableMusuemMesh(){
+        this.muesumModelMesh.material.colorWrite= true
+    }
     update()
     {
         this.animation.mixer.update(this.time.delta * 0.001)
