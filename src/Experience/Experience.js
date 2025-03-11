@@ -53,7 +53,7 @@ export default class Experience
         })
 
         // Time tick event
-        this.time.on('tick', () =>
+        this.renderer.on('tick', () =>
         {
             this.update()
         })
@@ -75,7 +75,7 @@ export default class Experience
     destroy()
     {
         this.sizes.off('resize')
-        this.time.off('tick')
+        this.renderer.off('tick')
 
         // Traverse the whole scene
         this.scene.traverse((child) =>

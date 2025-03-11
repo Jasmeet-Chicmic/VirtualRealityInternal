@@ -6,6 +6,7 @@ import { EVENTS } from '../../Constants.js'
 import SphereEnv from './EnvironmentModel/SphereEnv.js'
 import Circle from './Circle/Circle.js'
 import MovementIndicators from './MovementIndicators/MovementIndicators.js'
+import VRSetup from '../Utils/VRSetup.js'
 export default class World
 {
     constructor()
@@ -13,7 +14,8 @@ export default class World
         this.experience = new Experience()
         this.scene = this.experience.scene
         this.resources = this.experience.resources
-
+        this.camera = this.experience.camera.instance;
+        this.renderer = this.experience.renderer.instance
         // Wait for resources
         this.resources.on(EVENTS.READY, () =>
         {
@@ -25,6 +27,7 @@ export default class World
             this.circle = new Circle()
             this.environment = new Environment()
             this.intersectionObj = new Intersections()
+            this.vrControls = new VRSetup(this.renderer, this.scene, this.camera);
         })
     }
 

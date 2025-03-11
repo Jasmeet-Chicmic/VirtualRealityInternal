@@ -1,11 +1,13 @@
 import * as THREE from 'three'
 import Experience from './Experience.js'
 import { ACESFilmicToneMapping } from 'three'
-import { VRButton } from 'three/addons/webxr/VRButton.js';
-export default class Renderer
+
+import EventEmitter from './Utils/EventEmitter.js';
+export default class Renderer extends EventEmitter
 {
     constructor()
     {
+        super()
         this.experience = new Experience()
         this.canvas = this.experience.canvas
         this.sizes = this.experience.sizes
@@ -32,9 +34,15 @@ export default class Renderer
         this.instance.setPixelRatio(this.sizes.pixelRatio)
         //For testing
         // this.instance.sortObjects = false
+        this.instance.xr.enabled = true;
+        this.instance.setAnimationLoop(()=> {
 
+        //    this.update()
+           this.trigger('tick')
+        
+        } );
     }
-
+	
     resize()
     {
         this.instance.setSize(this.sizes.width, this.sizes.height)

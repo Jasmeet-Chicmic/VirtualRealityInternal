@@ -63,8 +63,7 @@ export default class Camera
     updateFov(value){
         this.currentFov = value
         this.instance.fov=value 
-
-    this.instance.updateProjectionMatrix()
+        this.instance.updateProjectionMatrix()
     }
     resetFov(){
         this.instance.fov = this.currentFov;
