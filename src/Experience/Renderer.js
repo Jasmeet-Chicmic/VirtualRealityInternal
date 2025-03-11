@@ -3,6 +3,7 @@ import Experience from './Experience.js'
 import { ACESFilmicToneMapping } from 'three'
 
 import EventEmitter from './Utils/EventEmitter.js';
+import { EVENTS } from '../Constants.js';
 export default class Renderer extends EventEmitter
 {
     constructor()
@@ -14,7 +15,8 @@ export default class Renderer extends EventEmitter
         this.scene = this.experience.scene
         this.camera = this.experience.camera
 
-        this.setInstance()
+        this.setInstance();
+        
     }
 
     setInstance()
@@ -34,15 +36,24 @@ export default class Renderer extends EventEmitter
         this.instance.setPixelRatio(this.sizes.pixelRatio)
         //For testing
         // this.instance.sortObjects = false
-        this.instance.xr.enabled = true;
+       
         this.instance.setAnimationLoop(()=> {
 
         //    this.update()
            this.trigger('tick')
         
         } );
+        this.setXR()
     }
-	
+	setXR(){
+        this.instance.xr.enabled = true;
+        this.instance.xr.addEventListener('sessionstart', () => {
+         this.trigger(EVENTS.XR_SESSION_START)
+        });
+    }
+    destroy(){
+        this.instance.xr.removeEventListener('sessionstart')
+    }
     resize()
     {
         this.instance.setSize(this.sizes.width, this.sizes.height)

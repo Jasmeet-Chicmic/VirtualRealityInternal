@@ -18,10 +18,15 @@ export default class Intersections extends EventEmitter{
     this.setUtils();
     this.setEvents();
     this.initialAnimation()
-   
+    this.experience.renderer.on(EVENTS.XR_SESSION_START,()=>{this.initialAnimationForVr()},this)
+  }
+  initialAnimationForVr(){
+ 
+    
+    // this.moveCamera(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
+    this.moveCameraForVR(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
   }
   initialAnimation(){
-
     this.moveCamera(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
   }
 
@@ -50,11 +55,7 @@ export default class Intersections extends EventEmitter{
  
     if(this.isCameraIntersected.length > 0){
 
-      if(this.currentCamera !=null ){
-
-        this.experience.camerasToIntersect.push(this.currentCamera);
-  
-      }
+    
       
       this.moveCamera(this.isCameraIntersected[0].object,this.isCameraIntersected[0].point);
       
@@ -143,7 +144,7 @@ export default class Intersections extends EventEmitter{
         this.previousMouseY = y;
     };
 
-    // Mouse Events
+    // // Mouse Events
     this.canvas.addEventListener("mousedown", (e) => startDragging(e.clientX, e.clientY));
     this.canvas.addEventListener("mouseup", stopDragging);
     this.canvas.addEventListener("mouseleave", stopDragging);
@@ -193,6 +194,12 @@ export default class Intersections extends EventEmitter{
 
   }
   async moveCamera(node,destinationPos,initialRotation=false) {
+    if(this.currentCamera !=null ){
+
+      this.experience.camerasToIntersect.push(this.currentCamera);
+
+    }
+
         if(initialRotation){
           this.camera.setCameraLayer(1)
         }
@@ -202,10 +209,11 @@ export default class Intersections extends EventEmitter{
 
         this.currentCamera = node;
         const name = this.currentCamera.name.slice(-4);
+        console.log("gsap image loading");
         const tex = await this.experience.world.sphere.loadNewTexture(
             EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
         );
-        
+        console.log("gsap image loaded");
 
      
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
@@ -216,29 +224,34 @@ export default class Intersections extends EventEmitter{
         if(initialRotation){
           
         const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
-        const startRotation = new THREE.Euler().copy(this.camera.instance.rotation);
-        this.camera.instance.lookAt(lookAtTarget);
-         endQuaternion = new THREE.Quaternion().copy(this.camera.instance.quaternion);
+        const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
+        this.camera.cameraGroup.lookAt(lookAtTarget);
+         endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
     
         // Reset to original rotation before animating
-        this.camera.instance.rotation.copy(startRotation);
+        this.camera.cameraGroup.rotation.copy(startRotation);
       }
     
       
-   
+      
       this.experience.world.sphere.changeTexture(tex);
-    gsap.to(this.camera.instance.position, {
+      console.log("gsap before started");
+    gsap.to(this.camera.cameraGroup.position, {
         duration: 2,
         x: destinationPos.x,
         y: destinationPos.y,
         z: destinationPos.z,
         onStart: () => {
+          console.log("gsap started");
+          
           this.experience.world.museum.enableMusuemMesh()
           this.experience.world.circle.disableCircle()
           this.experience.world.movementIndicators.disableAllIndicators()
         },
         onUpdate:()=>{
           // this.checkInterSections()
+         
+         
         },
         onComplete: () => {
           this.camera.setCameraLayer(0)
@@ -256,7 +269,68 @@ export default class Intersections extends EventEmitter{
       z: endQuaternion.z,
       w: endQuaternion.w,
       ease: "power2.out"
-  });}
+  });
+}
+}
+async moveCameraForVR(node,destinationPos,initialRotation=false) {
+  if(this.currentCamera !=null ){
+
+    this.experience.camerasToIntersect.push(this.currentCamera);
+
+  }
+  if(initialRotation){
+    this.camera.setCameraLayer(1)
+  }
+  if (this.currentCamera) {
+      this.prevCamera = this.currentCamera;
+  }
+
+  this.currentCamera = node;
+  const name = this.currentCamera.name.slice(-4);
+  console.log("gsap image loading");
+  const tex = await this.experience.world.sphere.loadNewTexture(
+      EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
+  );
+  console.log("gsap image loaded");
+
+
+  const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
+  if (index > -1) {
+      this.experience.camerasToIntersect.splice(index, 1);
+  }
+  let endQuaternion = 0;
+  if(initialRotation){
+    
+  const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
+  const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
+  this.camera.cameraGroup.lookAt(lookAtTarget);
+   endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
+
+  // Reset to original rotation before animating
+  this.camera.cameraGroup.rotation.copy(startRotation);
+}
+
+
+this.experience.world.museum.enableMusuemMesh()
+this.experience.world.circle.disableCircle()
+this.experience.world.movementIndicators.disableAllIndicators()
+this.experience.world.sphere.changeTextureForVR(tex);
+this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y-1.0, destinationPos.z)
+
+this.camera.setCameraLayer(0)
+this.experience.world.museum.disableMusuemMesh()
+this.experience.world.circle.enableCircle()
+this.experience.world.movementIndicators.enableAllIndicators()
+if(initialRotation){
+gsap.to(this.camera.instance.quaternion, {
+duration: 2,
+x: endQuaternion.x,
+y: endQuaternion.y,
+z: endQuaternion.z,
+w: endQuaternion.w,
+ease: "power2.out"
+});
+}
 }
 
 

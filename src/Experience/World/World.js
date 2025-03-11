@@ -27,7 +27,7 @@ export default class World
             this.circle = new Circle()
             this.environment = new Environment()
             this.intersectionObj = new Intersections()
-            this.vrControls = new VRSetup(this.renderer, this.scene, this.camera);
+            this.vrSetup = new VRSetup(this.renderer, this.scene, this.camera);
         })
     }
 
@@ -37,5 +37,9 @@ export default class World
             this.fox.update();
         if(this.intersectionObj)
             this.intersectionObj.update();
+
+        if(this.vrSetup &&this.vrSetup.isPresenting){
+            this.vrSetup.update()
+        }
     }
 }

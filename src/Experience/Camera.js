@@ -11,7 +11,8 @@ export default class Camera
         this.scene = this.experience.scene
         this.canvas = this.experience.canvas
         this.debug = this.experience.debug
-        this.currentFov = 100
+        this.currentFov = 100;
+        this.cameraGroup = new THREE.Group()
         if(this.debug.active)
             {
                 this.debugFolder = this.debug.ui.addFolder('Camera')
@@ -24,9 +25,11 @@ export default class Camera
     setInstance()
     {
         this.instance = new THREE.PerspectiveCamera(100, this.sizes.width / this.sizes.height, 0.1, 100000000)
-        this.instance.position.set(-180,40,10)
+   
+        this.cameraGroup.position.set(-180,40,10)
         // this.instance.layers.set(0)
-        this.scene.add(this.instance)
+        this.cameraGroup.add(this.instance)
+        this.scene.add(this.cameraGroup)
         this.addDebugProp()
     }
 
@@ -54,6 +57,7 @@ export default class Camera
      
     }
     setCameraLayer(layer=0){
+        this.cameraGroup.layers.set(layer)
         this.instance.layers.set(layer)
     }
     changeFov(fov){

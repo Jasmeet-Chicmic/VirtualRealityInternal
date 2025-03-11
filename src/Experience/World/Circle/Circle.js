@@ -67,6 +67,8 @@ export default class Circle
         this.scene.add(this.mesh)
     }
     updatePositionAndRotation(position,quaternion){
+       
+        
         this.mesh.position.copy(position).add(this.circlePosOffset)
         this.mesh.quaternion.copy(quaternion)
     }

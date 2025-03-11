@@ -125,6 +125,21 @@ export default class SphereEnv {
         // Fade in new sphere
         
     }
+    changeTextureForVR(newTexture){
+        if (!newTexture) return;
+    
+        if (!this.currentSphere) {
+            this.currentSphere = this.createSphere(newTexture, 1); // Create first sphere
+            return;
+        }
+    
+        // Create a new sphere with the new texture, start with opacity 0
+        const newSphere = this.createSphere(newTexture, 1);
+        this.currentSphere.geometry.dispose();
+        this.currentSphere.material.dispose();
+        this.currentSphere = newSphere;
+    
+    }
     
     
     /**

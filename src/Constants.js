@@ -25,5 +25,6 @@ export const EXPERIENCE = {
 export const EVENTS = {
    READY:"ready",
    ON_NODE_SELECT:"onNodeSelect",
+   XR_SESSION_START:"xrsessionstart"
 
 }
