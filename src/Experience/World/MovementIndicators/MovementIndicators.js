@@ -40,7 +40,9 @@ export default class MovementIndicators
     }
     setGeometry()
     {
-       this.geometry = new THREE.RingGeometry(0.01, 0.12, 64);
+    //    this.geometry = new THREE.RingGeometry(0.01, 0.12, 64);
+       this.geometry = new THREE.BoxGeometry(0.1,0.1,0.1); //vr
+    //    this.geometry = new THREE.BoxGeometry(1,1,1); //vr
     }
 
     setTextures()
@@ -69,6 +71,7 @@ export default class MovementIndicators
         this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ color: "brown",transparent:true,side:DoubleSide ,opacity:0.5}))
         this.mesh.position.copy(position)
         this.mesh.rotation.y = -Math.PI / 2;
+       
         this.mesh.name = name
         // this.mesh.scale.set(3,3,3)
         this.mesh.renderOrder = 3
@@ -88,7 +91,7 @@ export default class MovementIndicators
         this.allIndicators.forEach(mesh=>{
             if(currentCameraName!=mesh.name){
             mesh.visible=true;}
-            mesh.lookAt(destinationPos)
+            // mesh.lookAt(destinationPos)
         })
 
     }

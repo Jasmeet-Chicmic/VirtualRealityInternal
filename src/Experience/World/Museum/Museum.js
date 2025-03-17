@@ -60,13 +60,13 @@ export default class Museum
         {
             
             if(child instanceof PerspectiveCamera){
+                this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
            
                 if(child.name.includes("0000")){
                 this.firstCamera = child;
                    
                     
             }
-                this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
             }
             if(child instanceof THREE.Mesh){
                 // child.material.transparent = true;
