@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import Experience from '../../Experience'
 import { DoubleSide } from 'three'
 import { BoxGeometry } from 'three'
+import { RingGeometry } from 'three'
 
 
 export default class MovementIndicators
@@ -15,6 +16,7 @@ export default class MovementIndicators
         this.circlePosOffset = new THREE.Vector3(-0.01, 0.01, -0.01);
         this.camerasToIntersect = this.experience.camerasToIntersect
         this.allIndicators =[]
+   
         this.setGeometry()
         this.setTextures()
         this.setMaterial()
@@ -38,7 +40,7 @@ export default class MovementIndicators
     }
     setGeometry()
     {
-       this.geometry = new BoxGeometry(0.1,0.1,0.1)
+       this.geometry = new THREE.RingGeometry(0.01, 0.12, 64);
     }
 
     setTextures()
@@ -59,15 +61,16 @@ export default class MovementIndicators
 
     setMaterial()
     {
-        this.material = new THREE.MeshBasicMaterial({ color: "red",transparent:true })
+        // this.material = new THREE.MeshBasicMaterial({ color: "brown",transparent:true,side:DoubleSide ,opacity:0.5})
     }
 
     createNewMesh(position,name)
     {
-        this.mesh = new THREE.Mesh(this.geometry, this.material)
+        this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ color: "brown",transparent:true,side:DoubleSide ,opacity:0.5}))
         this.mesh.position.copy(position)
-        this.mesh.rotation.x = -Math.PI / 2;
+        this.mesh.rotation.y = -Math.PI / 2;
         this.mesh.name = name
+        // this.mesh.scale.set(3,3,3)
         this.mesh.renderOrder = 3
         this.camerasToIntersect.push(this.mesh)
         this.allIndicators.push(this.mesh)
@@ -78,8 +81,18 @@ export default class MovementIndicators
     disableAllIndicators(){
         this.allIndicators.forEach(mesh=>mesh.visible=false)
     }
-    enableAllIndicators(){
-        this.allIndicators.forEach(mesh=>mesh.visible=true)
+    enableAllIndicators(destinationPos,currentCameraName){
+     
+        
+        
+        this.allIndicators.forEach(mesh=>{
+            if(currentCameraName!=mesh.name){
+            mesh.visible=true;}
+            mesh.lookAt(destinationPos)
+        })
+
     }
+    
+
 
 }

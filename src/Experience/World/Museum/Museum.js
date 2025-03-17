@@ -47,11 +47,13 @@ export default class Museum
     {
       
        
-        let scale = 0.02
+        let scale = 0.022
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
         this.model.rotation.y = -Math.PI / 2
-        
+        this.model.position.x = 1.5;
+        this.model.position.y = 0.05;
+        this.model.position.z = 0.02;
         this.scene.add(this.model)
 
         console.log("this,model",this.model);
@@ -79,15 +81,11 @@ export default class Museum
                 child.colorWrite = false
                 child.renderOrder = 2
                 child.material.depthWrite = true
-                // child.geometry.computeFaceNormals()
-                // child.geometry.computeVertexNormals()
-                // child.material.depthTest = true
-                // child.material.blending = THREE.NormalBlending,
+                child.material.opacity = 0.5
                 this.experience.museumPartsToIntersect = child
                 this.muesumModelMesh = child
                 
-                // child.material.depthWrite = false
-                // child.material.depthTest = false
+             
                 console.log("childMaterial",child.material.transparent);
                 
             }

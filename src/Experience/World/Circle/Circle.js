@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import Experience from '../../Experience'
 import { DoubleSide } from 'three'
 
-
 export default class Circle
 {
     constructor()
@@ -17,25 +16,30 @@ export default class Circle
         this.setMaterial()
         this.setMesh()
         if(this.debug.active)
-        this.setDebugNormalMesh()
+            this.setDebugNormalMesh()
     }
     setDebugNormalMesh(){
         const geometry = new THREE.BufferGeometry();
-        geometry.setFromPoints( [ new THREE.Vector3(), new THREE.Vector3() ] );
+        geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
 
-        this.line = new THREE.Line( geometry, new THREE.LineBasicMaterial() );
-        this.experience.scene.add( this.line );
+        this.line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
+        this.experience.scene.add(this.line);
     }
-    updatePositionOfDebugNormalMesh(point,n){
+    updatePositionOfDebugNormalMesh(point, n){
         if(this.line){
-        const positions = this.line.geometry.attributes.position;
-        positions.setXYZ(0, point.x, point.y, point.z);
-        positions.setXYZ(1, point.x + n.x * 10, point.y + n.y * 10, point.z + n.z * 10);
-        positions.needsUpdate = true;}
+            const positions = this.line.geometry.attributes.position;
+            positions.setXYZ(0, point.x, point.y, point.z);
+            positions.setXYZ(1, point.x + n.x * 10, point.y + n.y * 10, point.z + n.z * 10);
+            positions.needsUpdate = true;
+        }
     }
     setGeometry()
     {
-        this.geometry = new THREE.CircleGeometry(0.1, 32);
+        // Outer ring
+        this.outerGeometry = new THREE.RingGeometry(0.08, 0.12, 64);
+
+        // Inner ring (smaller)
+        this.innerGeometry = new THREE.RingGeometry(0.05, 0.07, 64);
     }
 
     setTextures()
@@ -56,28 +60,44 @@ export default class Circle
 
     setMaterial()
     {
-        this.material = new THREE.MeshBasicMaterial({ color: 0xff0000,side:DoubleSide });
+        this.outerMaterial = new THREE.MeshBasicMaterial({ color: "brown",transparent:true,opacity:0.8 });
+        this.innerMaterial = new THREE.MeshBasicMaterial({ color: "brown", });
     }
 
     setMesh()
     {
-        this.mesh = new THREE.Mesh(this.geometry, this.material)
-    
-        this.mesh.rotation.x = -Math.PI / 2;
-        this.scene.add(this.mesh)
+        // Outer ring mesh
+        this.outerMesh = new THREE.Mesh(this.outerGeometry, this.outerMaterial);
+        // this.outerMesh.scale.set(2, 2, 2);
+        this.outerMesh.rotation.x = -Math.PI / 2;
+
+        // Inner ring mesh
+        this.innerMesh = new THREE.Mesh(this.innerGeometry, this.innerMaterial);
+        // this.innerMesh.scale.set(2, 2, 2);
+        this.innerMesh.rotation.x = -Math.PI / 2;
+
+        // Add both rings to the scene
+        this.scene.add(this.outerMesh);
+        this.scene.add(this.innerMesh);
     }
-    updatePositionAndRotation(position,quaternion){
-       
-        
-        this.mesh.position.copy(position).add(this.circlePosOffset)
-        this.mesh.quaternion.copy(quaternion)
+    updatePositionAndRotation(position, quaternion){
+        this.outerMesh.position.copy(position).add(this.circlePosOffset)
+        this.outerMesh.quaternion.copy(quaternion)
+
+        this.innerMesh.position.copy(position).add(this.circlePosOffset)
+        this.innerMesh.quaternion.copy(quaternion)
     }
 
     disableCircle(){
-        this.mesh.visible = false
+        this.outerMesh.visible = false;
+        this.innerMesh.visible = false;
     }
     enableCircle(){
-        this.mesh.visible = true
+        this.outerMesh.visible = true;
+        this.innerMesh.visible = true;
     }
 
+    setHoverColor(){
+
+    }
 }

@@ -89,7 +89,7 @@ export default class SphereEnv {
     
         // Animate transition: old sphere fades out, new sphere fades in
         gsap.to(this.experience.camera.instance, {
-            fov: this.experience.camera.instance.fov * 0.9, // Simulate depth zoom in
+            fov: this.experience.camera.instance.fov, // Simulate depth zoom in
             duration: 2,
             onUpdate: () => {
                 this.experience.camera.instance.updateProjectionMatrix();

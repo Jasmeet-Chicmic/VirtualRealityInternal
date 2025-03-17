@@ -47,7 +47,9 @@ export default class Renderer extends EventEmitter
     }
 	setXR(){
         this.instance.xr.enabled = true;
+        this.instance.xr.setReferenceSpaceType('local-floor'); 
         this.instance.xr.addEventListener('sessionstart', () => {
+           
          this.trigger(EVENTS.XR_SESSION_START)
         });
     }

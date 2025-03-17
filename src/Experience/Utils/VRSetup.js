@@ -65,9 +65,9 @@ export default class VRControls {
         this.experience.raycaster.setFromXRController( this.controller2 );
         this.intersectedCamera = this.experience.raycaster.intersectObjects( this.experience.camerasToIntersect );
        this.intersectedModel = this.experience.raycaster.intersectObject( this.experience.museumPartsToIntersect );
-    
+        this.experience.world.intersectionObj.setIndicatorHoverColor(this.intersectedCamera)
         this.experience.world.intersectionObj.setCirclePos(this.intersectedModel)
-    
+       
         
          
 

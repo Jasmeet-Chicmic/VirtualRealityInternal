@@ -4,6 +4,7 @@ import * as THREE from "three";
 import EventEmitter from "../../Utils/EventEmitter";
 import { EVENTS, EXPERIENCE } from "../../../Constants";
 import { Vector3 } from "three";
+import { Color } from "three";
 export default class Intersections extends EventEmitter{
   constructor() {
     super()
@@ -13,7 +14,7 @@ export default class Intersections extends EventEmitter{
     this.experience = new Experience();
     this.currentCamera = null
     this.prevCamera = null;
-   
+    this.hoverColor = new Color(EXPERIENCE.INDICATOR_HOVER_COLOR)
     // this.shipTooltip = document.getElementById("shipToolTip");
     this.setUtils();
     this.setEvents();
@@ -45,7 +46,7 @@ export default class Intersections extends EventEmitter{
     this.isDragging = false;
     this.duration = null;
     this.isCameraIntersected = [];
-  
+    this.currentIndicator=null;
   }
 
   
@@ -77,6 +78,29 @@ export default class Intersections extends EventEmitter{
 
 
 
+setIndicatorHoverColor(isCameraIntersected){
+  if(isCameraIntersected.length > 0){
+      const newIndicator = isCameraIntersected[0].object;
+
+      if(this.currentIndicator !== newIndicator){
+        
+          if (this.currentIndicator) {
+              this.currentIndicator.material.color.copy(this.currentIndicator.currentColor);
+          }
+
+        
+          this.currentIndicator = newIndicator;
+          this.currentIndicator.currentColor = this.currentIndicator.material.color.clone(); 
+          this.currentIndicator.material.color.set(this.hoverColor);
+      }
+  } else {
+      
+      if (this.currentIndicator) {
+          this.currentIndicator.material.color.copy(this.currentIndicator.currentColor);
+          this.currentIndicator = null;
+      }
+  }
+}
 
 
 
@@ -90,9 +114,15 @@ export default class Intersections extends EventEmitter{
 
   if (intersects.length > 0) {
     // const point = intersects[0].point;
+    
+    
     this.setCirclePos(intersects)
   }
+  
+  this.setIndicatorHoverColor(this.isCameraIntersected)
+ 
   }
+
   setEvents() {
     let pitchAngle = 0; // Track vertical rotation (in radians)
 
@@ -195,7 +225,7 @@ export default class Intersections extends EventEmitter{
   }
   async moveCamera(node,destinationPos,initialRotation=false) {
     if(this.currentCamera !=null ){
-
+      this.currentCamera.visible = true;
       this.experience.camerasToIntersect.push(this.currentCamera);
 
     }
@@ -208,12 +238,13 @@ export default class Intersections extends EventEmitter{
         }
 
         this.currentCamera = node;
+        this.currentCamera.visible = false;
         const name = this.currentCamera.name.slice(-4);
-        console.log("gsap image loading");
+      
         const tex = await this.experience.world.sphere.loadNewTexture(
             EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
         );
-        console.log("gsap image loaded");
+       
 
      
         const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
@@ -226,6 +257,7 @@ export default class Intersections extends EventEmitter{
         const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
         const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
         this.camera.cameraGroup.lookAt(lookAtTarget);
+       
          endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
     
         // Reset to original rotation before animating
@@ -235,14 +267,14 @@ export default class Intersections extends EventEmitter{
       
       
       this.experience.world.sphere.changeTexture(tex);
-      console.log("gsap before started");
+    
     gsap.to(this.camera.cameraGroup.position, {
         duration: 2,
         x: destinationPos.x,
         y: destinationPos.y,
         z: destinationPos.z,
         onStart: () => {
-          console.log("gsap started");
+        
           
           this.experience.world.museum.enableMusuemMesh()
           this.experience.world.circle.disableCircle()
@@ -257,7 +289,9 @@ export default class Intersections extends EventEmitter{
           this.camera.setCameraLayer(0)
           this.experience.world.museum.disableMusuemMesh()
           this.experience.world.circle.enableCircle()
-          this.experience.world.movementIndicators.enableAllIndicators()
+          this.experience.world.movementIndicators.enableAllIndicators(destinationPos,this.currentCamera.name)
+
+          
         },
         ease: "power2.inout",
     });
@@ -274,7 +308,7 @@ export default class Intersections extends EventEmitter{
 }
 async moveCameraForVR(node,destinationPos,initialRotation=false) {
   if(this.currentCamera !=null ){
-
+    this.currentCamera.visible = true;
     this.experience.camerasToIntersect.push(this.currentCamera);
 
   }
@@ -287,11 +321,11 @@ async moveCameraForVR(node,destinationPos,initialRotation=false) {
 
   this.currentCamera = node;
   const name = this.currentCamera.name.slice(-4);
-  console.log("gsap image loading");
+
   const tex = await this.experience.world.sphere.loadNewTexture(
       EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
   );
-  console.log("gsap image loaded");
+
 
 
   const index = this.experience.camerasToIntersect.indexOf(this.currentCamera);
@@ -315,12 +349,12 @@ this.experience.world.museum.enableMusuemMesh()
 this.experience.world.circle.disableCircle()
 this.experience.world.movementIndicators.disableAllIndicators()
 this.experience.world.sphere.changeTextureForVR(tex);
-this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y-1.0, destinationPos.z)
+this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y-1, destinationPos.z)
 
 this.camera.setCameraLayer(0)
 this.experience.world.museum.disableMusuemMesh()
 this.experience.world.circle.enableCircle()
-this.experience.world.movementIndicators.enableAllIndicators()
+this.experience.world.movementIndicators.enableAllIndicators(destinationPos,this.currentCamera.name)
 if(initialRotation){
 gsap.to(this.camera.instance.quaternion, {
 duration: 2,

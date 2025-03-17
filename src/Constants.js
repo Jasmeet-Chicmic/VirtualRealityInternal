@@ -18,7 +18,8 @@ export const EXPERIENCE = {
     CAMERA_FOV:{
       MAX_LIMIT:100,
       MIN_LIMIT:60
-    }
+    },
+    INDICATOR_HOVER_COLOR:"black"
    }
 
 
