@@ -254,7 +254,7 @@ setIndicatorHoverColor(isCameraIntersected){
         let endQuaternion = 0;
         if(initialRotation){
           
-        const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
+        const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z);
         const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
         this.camera.cameraGroup.lookAt(lookAtTarget);
        
@@ -271,7 +271,7 @@ setIndicatorHoverColor(isCameraIntersected){
     gsap.to(this.camera.cameraGroup.position, {
         duration: 2,
         x: destinationPos.x,
-        y: destinationPos.y,
+        y: destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA,
         z: destinationPos.z,
         onStart: () => {
         
