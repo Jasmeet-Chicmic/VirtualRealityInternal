@@ -47,12 +47,12 @@ export default class Museum
     {
       
        
-        let scale = 0.024
+        let scale = 0.02
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
         this.model.rotation.y = -Math.PI / 2
 
-        this.model.position.set(1.5,-0.5, 0.12)
+        this.model.position.set(0,1.94,0)
         this.scene.add(this.model)
 
         console.log("this,model",this.model);
@@ -161,7 +161,7 @@ export default class Museum
     }
 
     disableMusuemMesh(){
-        // this.muesumModelMesh.material.colorWrite = false
+        this.muesumModelMesh.material.colorWrite = false
     }
     enableMusuemMesh(){
         // this.muesumModelMesh.material.colorWrite= true

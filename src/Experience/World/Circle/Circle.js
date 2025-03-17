@@ -66,14 +66,15 @@ export default class Circle
 
     setMesh()
     {
+        this.scale = 1
         // Outer ring mesh
         this.outerMesh = new THREE.Mesh(this.outerGeometry, this.outerMaterial);
-        this.outerMesh.scale.set(2, 2, 2);
+        this.outerMesh.scale.set(this.scale,this.scale,this.scale);
         this.outerMesh.rotation.x = -Math.PI / 2;
 
         // Inner ring mesh
         this.innerMesh = new THREE.Mesh(this.innerGeometry, this.innerMaterial);
-        this.innerMesh.scale.set(2, 2, 2);
+        this.innerMesh.scale.set(this.scale,this.scale,this.scale);
         this.innerMesh.rotation.x = -Math.PI / 2;
 
         // Add both rings to the scene
