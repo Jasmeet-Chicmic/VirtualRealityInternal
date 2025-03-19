@@ -20,7 +20,8 @@ export const EXPERIENCE = {
       MIN_LIMIT:60
     },
     INDICATOR_HOVER_COLOR:"black",
-    HEIGHT_OF_CAMERA:9
+    HEIGHT_OF_CAMERA:9,
+    CAMERA_MOVEMENT_SPEED_FOR_WEB:0
    }
 
 

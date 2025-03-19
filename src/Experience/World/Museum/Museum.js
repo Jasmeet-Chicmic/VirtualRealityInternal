@@ -47,7 +47,7 @@ export default class Museum
     {
       
        
-        let scale = 0.35
+        let scale = 0.31
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
         this.model.rotation.y = -Math.PI /2
@@ -61,7 +61,7 @@ export default class Museum
             
             if(child instanceof PerspectiveCamera){
                 this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
-                console.log("perspective camera",child);
+              
                 
                 if(child.name.includes("0000")){
                 this.firstCamera = child;
@@ -76,7 +76,7 @@ export default class Museum
                 // let helper = new VertexNormalsHelper( child, 1.0, 0xffff00, 1 );
                 // this.scene.add( helper );
                 child.material.side = DoubleSide
-                child.material.color.setHex(0x00ffff)
+                child.material.color.setHex( 0xEADDCA)
                 child.layers.enable(1)
                 child.colorWrite = false
                 child.renderOrder = 2
@@ -169,7 +169,7 @@ export default class Museum
         this.muesumModelMesh.material.colorWrite = false
     }
     enableMusuemMesh(){
-        // this.muesumModelMesh.material.colorWrite= true
+        this.muesumModelMesh.material.colorWrite= true
     }
     update()
     {

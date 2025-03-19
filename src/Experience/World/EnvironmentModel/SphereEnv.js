@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../../Experience'
 import gsap from 'gsap'
+import { EXPERIENCE } from '../../../Constants'
 
 export default class SphereEnv {
     constructor() {
@@ -90,7 +91,7 @@ export default class SphereEnv {
         // Animate transition: old sphere fades out, new sphere fades in
         gsap.to(this.experience.camera.instance, {
             fov: this.experience.camera.instance.fov, // Simulate depth zoom in
-            duration: 2,
+            duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
             onUpdate: () => {
                 this.experience.camera.instance.updateProjectionMatrix();
             },
@@ -106,7 +107,7 @@ export default class SphereEnv {
         gsap.to(newSphere.material, {
            
             opacity: 1,
-            duration: 2,
+            duration:EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
             ease: "power2.out",
         });
         // Fade out old sphere

@@ -183,7 +183,7 @@ setIndicatorHoverColor(isCameraIntersected){
         updatePointerPos(e.clientX, e.clientY);
         handleDrag(e.clientX, e.clientY);
     });
-
+  
     // Touch Events
     this.canvas.addEventListener("touchstart", (e) => {
         const touch = e.touches[0];
@@ -261,17 +261,18 @@ setIndicatorHoverColor(isCameraIntersected){
         this.camera.cameraGroup.lookAt(lookAtTarget);
        
          endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
-    
+        
         // Reset to original rotation before animating
         this.camera.cameraGroup.rotation.copy(startRotation);
+      
       }
     
       
-      this.experience.world.environment.setNewEnv(tex)
+      
       this.experience.world.sphere.changeTexture(tex);
-    
+      this.experience.world.environment.setNewEnv(tex)
     gsap.to(this.camera.cameraGroup.position, {
-        duration: 2,
+        duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
         x: destinationPos.x,
         y: destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA,
         z: destinationPos.z,
@@ -292,14 +293,14 @@ setIndicatorHoverColor(isCameraIntersected){
           this.experience.world.museum.disableMusuemMesh()
           this.experience.world.circle.enableCircle()
           this.experience.world.movementIndicators.enableAllIndicators(destinationPos,this.currentCamera.name)
-
+          
           
         },
         ease: "power2.inout",
     });
     if(initialRotation){
     gsap.to(this.camera.instance.quaternion, {
-      duration: 2,
+      duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
       x: endQuaternion.x,
       y: endQuaternion.y,
       z: endQuaternion.z,
