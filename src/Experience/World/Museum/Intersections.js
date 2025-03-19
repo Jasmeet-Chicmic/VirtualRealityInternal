@@ -56,7 +56,8 @@ export default class Intersections extends EventEmitter{
  
     if(this.isCameraIntersected.length > 0){
 
-    
+      console.log("camera",this.isCameraIntersected[0].object);
+      
       
       this.moveCamera(this.isCameraIntersected[0].object,this.isCameraIntersected[0].object.position);
       
@@ -255,7 +256,7 @@ setIndicatorHoverColor(isCameraIntersected){
         let endQuaternion = 0;
         if(initialRotation){
           
-        const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y, destinationPos.z);
+        const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z);
         const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
         this.camera.cameraGroup.lookAt(lookAtTarget);
        
@@ -266,13 +267,13 @@ setIndicatorHoverColor(isCameraIntersected){
       }
     
       
-      
+      this.experience.world.environment.setNewEnv(tex)
       this.experience.world.sphere.changeTexture(tex);
     
     gsap.to(this.camera.cameraGroup.position, {
         duration: 2,
         x: destinationPos.x,
-        y: destinationPos.y,
+        y: destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA,
         z: destinationPos.z,
         onStart: () => {
         
@@ -336,7 +337,7 @@ async moveCameraForVR(node,destinationPos,initialRotation=false) {
   let endQuaternion = 0;
   if(initialRotation){
     
-  const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y-1, destinationPos.z);
+  const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z);
   const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
   this.camera.cameraGroup.lookAt(lookAtTarget);
    endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
@@ -350,7 +351,8 @@ this.experience.world.museum.enableMusuemMesh()
 this.experience.world.circle.disableCircle()
 this.experience.world.movementIndicators.disableAllIndicators()
 this.experience.world.sphere.changeTextureForVR(tex);
-this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y-1, destinationPos.z)
+this.experience.world.environment.setNewEnv(tex)
+this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z)
 
 this.camera.setCameraLayer(0)
 this.experience.world.museum.disableMusuemMesh()

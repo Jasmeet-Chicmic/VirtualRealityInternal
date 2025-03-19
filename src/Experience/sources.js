@@ -40,6 +40,6 @@ export default [
     {
         name:'museum',
         type:"fbx",
-        path:'models/Museum/Museum_Model.fbx'
+        path:'models/Museum/Museum_Model_new.fbx'
     }
 ]

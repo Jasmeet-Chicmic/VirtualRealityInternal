@@ -18,6 +18,7 @@ export default class Environment
 
         this.setSunLight()
         this.setEnvironmentMap()
+        this.pmremGenerator = new THREE.PMREMGenerator(this.experience.renderer.instance);
     }
 
     setSunLight()
@@ -63,16 +64,21 @@ export default class Environment
                 .step(0.001)
         }
     }
-
+    setNewEnv(texture){
+        
+        const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
+        this.scene.background = envMap
+        this.scene.environment = envMap
+    }
     setEnvironmentMap()
     {
         this.environmentMap = {}
         this.environmentMap.intensity = 5
         this.environmentMap.texture = this.resources.items.MuseumEnv
         this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
-        // this.scene.background = this.environmentMap.texture
-        this.scene.background = new THREE.Color('white')
-        // this.scene.environment = this.environmentMap.texture
+        this.scene.background = this.environmentMap.texture
+        // this.scene.background = new THREE.Color('white')
+        this.scene.environment = this.environmentMap.texture
 
         this.environmentMap.updateMaterials = () =>
         {

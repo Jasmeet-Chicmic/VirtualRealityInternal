@@ -36,11 +36,12 @@ export default class MovementIndicators
         const positions = this.line.geometry.attributes.position;
         positions.setXYZ(0, point.x, point.y, point.z);
         positions.setXYZ(1, point.x + n.x * 10, point.y + n.y * 10, point.z + n.z * 10);
-        positions.needsUpdate = true;}
+        positions.needsUpdate = true;
+    }
     }
     setGeometry()
     {
-       this.geometry = new THREE.RingGeometry(0.01, 0.12, 64);
+       this.geometry = new THREE.RingGeometry(0.2, 2, 64);
     //    this.geometry = new THREE.BoxGeometry(0.1,0.1,0.1); //vr
     //    this.geometry = new THREE.BoxGeometry(1,1,1); //vr
     }
@@ -68,9 +69,9 @@ export default class MovementIndicators
 
     createNewMesh(position,name)
     {
-        this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ color: "brown",transparent:true,side:DoubleSide ,opacity:0.5}))
+        this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ color: "brown",transparent:true,side:DoubleSide ,opacity:0.8}))
         this.mesh.position.copy(position)
-        this.mesh.rotation.y = -Math.PI / 2;
+        this.mesh.rotation.x = -Math.PI / 2;
        
         this.mesh.name = name
         // this.mesh.scale.set(3,3,3)
@@ -91,7 +92,7 @@ export default class MovementIndicators
         this.allIndicators.forEach(mesh=>{
             if(currentCameraName!=mesh.name){
             mesh.visible=true;}
-            mesh.lookAt(destinationPos)
+            // mesh.lookAt(destinationPos)
         })
 
     }

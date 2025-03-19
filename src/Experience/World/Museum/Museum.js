@@ -47,10 +47,10 @@ export default class Museum
     {
       
        
-        let scale = 0.02
+        let scale = 0.35
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
-        this.model.rotation.y = -Math.PI / 2
+        this.model.rotation.y = -Math.PI /2
 
         this.model.position.set(0,1.94,0)
         this.scene.add(this.model)
@@ -61,7 +61,8 @@ export default class Museum
             
             if(child instanceof PerspectiveCamera){
                 this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
-           
+                console.log("perspective camera",child);
+                
                 if(child.name.includes("0000")){
                 this.firstCamera = child;
                    
@@ -105,6 +106,10 @@ export default class Museum
         this.debugFolder.add(this.model.position, 'x').name("wholeX").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.model.position, 'y').name("wholeY").min(-1000).max(1000).step(0.01);
         this.debugFolder.add(this.model.position, 'z').name("wholeZ").min(-1000).max(1000).step(0.01);
+        // this.debugFolder.add(this.model.rotation, 'x').name("wholeRotationsX").min(-1000).max(1000).step(0.01);
+        // this.debugFolder.add(this.model.rotation, 'y').name("wholeRotationsY").min(-1000).max(1000).step(0.01);
+        // this.debugFolder.add(this.model.rotation, 'z').name("wholeRotationsZ").min(-1000).max(1000).step(0.01);
+
         this.debugFolder.add(this.muesumModelMesh.material, 'opacity').min(0).max(1).step(0.01);
         this.debugFolder.add(this.muesumModelMesh, 'visible').name("visible");
      

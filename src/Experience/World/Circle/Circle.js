@@ -66,7 +66,7 @@ export default class Circle
 
     setMesh()
     {
-        this.scale = 1
+        this.scale = 6
         // Outer ring mesh
         this.outerMesh = new THREE.Mesh(this.outerGeometry, this.outerMaterial);
         this.outerMesh.scale.set(this.scale,this.scale,this.scale);

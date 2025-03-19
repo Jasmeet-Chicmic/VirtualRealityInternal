@@ -141,7 +141,9 @@ export default class SphereEnv {
     
     }
     
-    
+    disableSphereForVR(){
+        this.currentSphere.visible = false;
+    }
     /**
      * Creates a new sphere with a given texture and opacity.
      */
@@ -158,7 +160,7 @@ export default class SphereEnv {
         const sphere = new THREE.Mesh(this.geometry, material);
         sphere.position.set(0,0,0); // Place new sphere at the same position
         this.scene.add(sphere);
-      
+        sphere.visible = false
         return sphere;
     }
     
