@@ -25,7 +25,11 @@ export default class Intersections extends EventEmitter{
  
     
     // this.moveCamera(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
-    this.moveCameraForVR(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
+ 
+    
+
+    this.moveCameraForVR(this.currentCamera,this.experience.world.museum.firstCamera.position,true)
+ 
   }
   initialAnimation(){
     this.moveCamera(this.experience.world.museum.firstCamera,this.experience.world.museum.firstCamera.position,true)
