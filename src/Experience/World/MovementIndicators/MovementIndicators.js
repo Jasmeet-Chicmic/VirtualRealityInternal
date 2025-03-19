@@ -40,8 +40,8 @@ export default class MovementIndicators
     }
     setGeometry()
     {
-    //    this.geometry = new THREE.RingGeometry(0.01, 0.12, 64);
-       this.geometry = new THREE.BoxGeometry(0.1,0.1,0.1); //vr
+       this.geometry = new THREE.RingGeometry(0.01, 0.12, 64);
+    //    this.geometry = new THREE.BoxGeometry(0.1,0.1,0.1); //vr
     //    this.geometry = new THREE.BoxGeometry(1,1,1); //vr
     }
 
@@ -91,7 +91,7 @@ export default class MovementIndicators
         this.allIndicators.forEach(mesh=>{
             if(currentCameraName!=mesh.name){
             mesh.visible=true;}
-            // mesh.lookAt(destinationPos)
+            mesh.lookAt(destinationPos)
         })
 
     }

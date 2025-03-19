@@ -58,7 +58,7 @@ export default class Intersections extends EventEmitter{
 
     
       
-      this.moveCamera(this.isCameraIntersected[0].object,this.isCameraIntersected[0].point);
+      this.moveCamera(this.isCameraIntersected[0].object,this.isCameraIntersected[0].object.position);
       
     }
     
@@ -224,13 +224,14 @@ setIndicatorHoverColor(isCameraIntersected){
 
   }
   async moveCamera(node,destinationPos,initialRotation=false) {
-    if(this.currentCamera !=null ){
+    if(this.currentCamera != null ){
       this.currentCamera.visible = true;
       this.experience.camerasToIntersect.push(this.currentCamera);
 
     }
 
         if(initialRotation){
+          node.visible = false
           this.camera.setCameraLayer(1)
         }
         if (this.currentCamera) {

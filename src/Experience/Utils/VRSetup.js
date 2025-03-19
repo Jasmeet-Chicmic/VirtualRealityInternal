@@ -87,8 +87,9 @@ export default class VRControls {
     onSelectStart(event) {
         
         
-        if(this.intersectedCamera.length>0)
-        this.experience.world.intersectionObj.moveCameraForVR(this.intersectedCamera[0].object,this.intersectedCamera[0].point);
+        if(this.intersectedCamera.length>0){
+           
+        this.experience.world.intersectionObj.moveCameraForVR(this.intersectedCamera[0].object,this.intersectedCamera[0].object.position);}
         console.log('onselect start');
     }
 
