@@ -1,10 +1,8 @@
 import * as THREE from 'three'
 import {PerspectiveCamera} from 'three'
 import Experience from '../../Experience.js'
-import { BoxGeometry } from 'three'
 import { DoubleSide } from 'three'
-import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
-import { add3DVideoPlayer } from '../../InteractiveElements/Video.js'
+
 
 export default class Museum
 {
@@ -91,7 +89,7 @@ export default class Museum
                 
             }
         })
-        add3DVideoPlayer(this.experience.scene)
+        this.experience.world.videoPlayer.createVideoPlayer("video1", "interactiveAssets/video.mp4", new THREE.Vector3(-50, 15, -98));
       this.addDebugProp()
         
     }

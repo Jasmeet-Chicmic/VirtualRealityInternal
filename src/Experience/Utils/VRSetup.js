@@ -16,6 +16,7 @@ export default class VRControls {
         this.vrGroup.add(this.scene);
         this.renderer.xr.getCamera().add(this.vrGroup); // Attach to camera
         this.intersectedCamera = []
+        this.isInteractionBtnIntersected = []
         this.initVR();
         this.setVRControls();
     }
@@ -65,6 +66,7 @@ export default class VRControls {
         this.experience.raycaster.setFromXRController( this.controller2 );
         this.intersectedCamera = this.experience.raycaster.intersectObjects( this.experience.camerasToIntersect );
        this.intersectedModel = this.experience.raycaster.intersectObject( this.experience.museumPartsToIntersect );
+      this.isInteractionBtnIntersected =  this.experience.raycaster.intersectObjects(this.experience.interactionObjects);
         this.experience.world.intersectionObj.setIndicatorHoverColor(this.intersectedCamera)
         this.experience.world.intersectionObj.setCirclePos(this.intersectedModel)
        
@@ -91,6 +93,9 @@ export default class VRControls {
            
         this.experience.world.intersectionObj.moveCameraForVR(this.intersectedCamera[0].object,this.intersectedCamera[0].object.position);}
         console.log('onselect start');
+        if( this.isInteractionBtnIntersected.length>0){
+            this.experience.world.videoPlayer.toggleVideo(this.isInteractionBtnIntersected[0].object.userData.videoID)
+          }
     }
 
     onSelectEnd(event) {

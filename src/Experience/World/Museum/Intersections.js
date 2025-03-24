@@ -50,6 +50,7 @@ export default class Intersections extends EventEmitter{
     this.isDragging = false;
     this.duration = null;
     this.isCameraIntersected = [];
+    this.isInteractionBtnIntersected = []
     this.currentIndicator=null;
   }
 
@@ -65,6 +66,9 @@ export default class Intersections extends EventEmitter{
       
       this.moveCamera(this.isCameraIntersected[0].object,this.isCameraIntersected[0].object.position);
       
+    }
+    if( this.isInteractionBtnIntersected.length>0){
+      this.experience.world.videoPlayer.toggleVideo(this.isInteractionBtnIntersected[0].object.userData.videoID)
     }
     
   }
@@ -127,6 +131,7 @@ setIndicatorHoverColor(isCameraIntersected) {
   }
   
   this.setIndicatorHoverColor(this.isCameraIntersected)
+  this.isInteractionBtnIntersected = this.raycaster.intersectObjects(this.experience.interactionObjects);
  
   }
 

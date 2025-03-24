@@ -7,6 +7,7 @@ import SphereEnv from './EnvironmentModel/SphereEnv.js'
 import Circle from './Circle/Circle.js'
 import MovementIndicators from './MovementIndicators/MovementIndicators.js'
 import VRSetup from '../Utils/VRSetup.js'
+import VideoPlayer3D from '../InteractiveElements/Video.js'
 export default class World
 {
     constructor()
@@ -22,6 +23,7 @@ export default class World
             // Setup
            
             this.movementIndicators = new MovementIndicators()
+            this.videoPlayer = new VideoPlayer3D(this.scene)
             this.sphere = new SphereEnv()
             this.museum = new Museum()
             this.circle = new Circle()
