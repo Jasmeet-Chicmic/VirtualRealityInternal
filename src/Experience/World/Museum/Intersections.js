@@ -83,29 +83,31 @@ export default class Intersections extends EventEmitter{
 
 
 
-setIndicatorHoverColor(isCameraIntersected){
-  if(isCameraIntersected.length > 0){
+setIndicatorHoverColor(isCameraIntersected) {
+  if (isCameraIntersected.length > 0) {
       const newIndicator = isCameraIntersected[0].object;
 
-      if(this.currentIndicator !== newIndicator){
-        
+      if (this.currentIndicator !== newIndicator) {
+          // Restore previous indicator's opacity if it exists
           if (this.currentIndicator) {
-              this.currentIndicator.material.color.copy(this.currentIndicator.currentColor);
+              this.currentIndicator.material.opacity = this.currentIndicator.originalOpacity;
           }
 
-        
+          // Set new indicator and store original opacity
           this.currentIndicator = newIndicator;
-          this.currentIndicator.currentColor = this.currentIndicator.material.color.clone(); 
-          this.currentIndicator.material.color.set(this.hoverColor);
+          this.currentIndicator.originalOpacity = this.currentIndicator.material.opacity; 
+          this.currentIndicator.material.transparent = true; // Enable transparency
+          this.currentIndicator.material.opacity = 0.5; // Set hover opacity (adjust as needed)
       }
   } else {
-      
+      // Restore opacity when not hovered
       if (this.currentIndicator) {
-          this.currentIndicator.material.color.copy(this.currentIndicator.currentColor);
+          this.currentIndicator.material.opacity = this.currentIndicator.originalOpacity;
           this.currentIndicator = null;
       }
   }
 }
+
 
 
 

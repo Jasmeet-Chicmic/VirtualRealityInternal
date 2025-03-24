@@ -41,7 +41,7 @@ export default class MovementIndicators
     }
     setGeometry()
     {
-       this.geometry = new THREE.RingGeometry(0.2, 2, 64);
+       this.geometry = new THREE.CircleGeometry(2,32);
     //    this.geometry = new THREE.BoxGeometry(0.1,0.1,0.1); //vr
     //    this.geometry = new THREE.BoxGeometry(1,1,1); //vr
     }
@@ -69,10 +69,10 @@ export default class MovementIndicators
 
     createNewMesh(position,name)
     {
-        this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ color: "brown",transparent:true,side:DoubleSide ,opacity:0.8}))
+        this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ transparent:true,side:DoubleSide ,opacity:1,map:this.experience.resources.items["StaticIndicator"]}))
         this.mesh.position.copy(position)
         this.mesh.rotation.x = -Math.PI / 2;
-       
+        this.mesh.position.y -=2
         this.mesh.name = name
         // this.mesh.scale.set(3,3,3)
         this.mesh.renderOrder = 3

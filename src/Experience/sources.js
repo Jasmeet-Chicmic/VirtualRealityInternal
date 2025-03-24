@@ -28,6 +28,16 @@ export default [
         path: 'textures/environmentMap/MuseumEnv/360_test_0000.jpeg'
     },
     {
+        name: 'Indicator',
+        type: 'texture',
+        path: 'textures/indicators/indicator.png'
+    },
+    {
+        name: 'StaticIndicator',
+        type: 'texture',
+        path: 'textures/indicators/staticIndicator.png'
+    },
+    {
         name: 'NewMuseumEnv',
         type: 'texture',
         path: 'textures/environmentMap/MuseumEnv/360_test_0001.jpeg'

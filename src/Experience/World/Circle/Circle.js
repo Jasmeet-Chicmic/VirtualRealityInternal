@@ -36,10 +36,10 @@ export default class Circle
     setGeometry()
     {
         // Outer ring
-        this.outerGeometry = new THREE.RingGeometry(0.08, 0.12, 64);
+        this.outerGeometry = new THREE.CircleGeometry(0.3, 64);
 
         // Inner ring (smaller)
-        this.innerGeometry = new THREE.RingGeometry(0.05, 0.07, 64);
+        // this.innerGeometry = new THREE.RingGeometry(0.05, 0.07, 64);
     }
 
     setTextures()
@@ -60,8 +60,8 @@ export default class Circle
 
     setMaterial()
     {
-        this.outerMaterial = new THREE.MeshBasicMaterial({ color: "brown",transparent:true,opacity:0.8 });
-        this.innerMaterial = new THREE.MeshBasicMaterial({ color: "brown", });
+        this.outerMaterial = new THREE.MeshBasicMaterial({transparent:true,opacity:0.6 ,map:this.experience.resources.items["Indicator"]});
+        // this.innerMaterial = new THREE.MeshBasicMaterial({ color: "brown", });
     }
 
     setMesh()
@@ -73,29 +73,29 @@ export default class Circle
         this.outerMesh.rotation.x = -Math.PI / 2;
 
         // Inner ring mesh
-        this.innerMesh = new THREE.Mesh(this.innerGeometry, this.innerMaterial);
-        this.innerMesh.scale.set(this.scale,this.scale,this.scale);
-        this.innerMesh.rotation.x = -Math.PI / 2;
+        // this.innerMesh = new THREE.Mesh(this.innerGeometry, this.innerMaterial);
+        // this.innerMesh.scale.set(this.scale,this.scale,this.scale);
+        // this.innerMesh.rotation.x = -Math.PI / 2;
 
         // Add both rings to the scene
         this.scene.add(this.outerMesh);
-        this.scene.add(this.innerMesh);
+        // this.scene.add(this.innerMesh);
     }
     updatePositionAndRotation(position, quaternion){
         this.outerMesh.position.copy(position).add(this.circlePosOffset)
         this.outerMesh.quaternion.copy(quaternion)
 
-        this.innerMesh.position.copy(position).add(this.circlePosOffset)
-        this.innerMesh.quaternion.copy(quaternion)
+        // this.innerMesh.position.copy(position).add(this.circlePosOffset)
+        // this.innerMesh.quaternion.copy(quaternion)
     }
 
     disableCircle(){
         this.outerMesh.visible = false;
-        this.innerMesh.visible = false;
+        // this.innerMesh.visible = false;
     }
     enableCircle(){
         this.outerMesh.visible = true;
-        this.innerMesh.visible = true;
+        // this.innerMesh.visible = true;
     }
 
     setHoverColor(){

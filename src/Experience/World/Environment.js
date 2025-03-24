@@ -65,8 +65,8 @@ export default class Environment
         }
     }
     setNewEnv(texture){
-        
         const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
+        // envMap.mapping = THREE.CubeRefractionMapping;
         this.scene.background = envMap
         this.scene.environment = envMap
     }

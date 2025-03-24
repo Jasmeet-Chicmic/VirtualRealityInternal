@@ -81,7 +81,7 @@ export default class Museum
                 child.colorWrite = false
                 child.renderOrder = 2
                 child.material.depthWrite = true
-                child.material.opacity = 0.5
+                child.material.opacity = 0.4
                 this.experience.museumPartsToIntersect = child
                 this.muesumModelMesh = child
                 
