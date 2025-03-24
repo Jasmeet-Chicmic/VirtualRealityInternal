@@ -4,6 +4,7 @@ import Experience from '../../Experience.js'
 import { BoxGeometry } from 'three'
 import { DoubleSide } from 'three'
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+import { add3DVideoPlayer } from '../../InteractiveElements/Video.js'
 
 export default class Museum
 {
@@ -65,7 +66,7 @@ export default class Museum
                 
                 if(child.name.includes("0000")){
                 this.firstCamera = child;
-                   
+              
                     
             }
             }
@@ -90,6 +91,7 @@ export default class Museum
                 
             }
         })
+        add3DVideoPlayer(this.experience.scene)
       this.addDebugProp()
         
     }
