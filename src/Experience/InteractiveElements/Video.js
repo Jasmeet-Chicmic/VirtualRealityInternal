@@ -6,6 +6,22 @@ export default class VideoPlayer3D {
         this.scene = scene;
         this.experience = new Experience()
         this.videoPlayers = new Map(); // Store videos by ID
+        this.pauseTax = this.experience.resources.items["pauseIcon"];
+        this.playTax = this.experience.resources.items["playIcon"];
+        // this.pauseTax.wrapS = THREE.ClampToEdgeWrapping;
+        // this.pauseTax.wrapT = THREE.ClampToEdgeWrapping;
+        // // this.pauseTax.needsUpdate = true;
+        // this.playTax.wrapS = THREE.ClampToEdgeWrapping;
+        // this.playTax.wrapT = THREE.ClampToEdgeWrapping;
+        // // this.playTax.needsUpdate = true;
+        // this.playTax.magFilter = THREE.LinearFilter;
+        // this.playTax.minFilter = THREE.LinearMipMapLinearFilter;
+        // this.pauseTax.magFilter = THREE.LinearFilter;
+        // this.pauseTax.minFilter = THREE.LinearMipMapLinearFilter;
+        // this.pauseTax.repeat.set(1, 1);
+        // this.playTax.repeat.set(1, 1);
+
+       
     }
 
     /**
@@ -48,9 +64,11 @@ export default class VideoPlayer3D {
         videoGroup.add(videoMesh);
 
         // Create play/pause button
-        const buttonGeometry = new THREE.BoxGeometry(3, 1.5, 0.3);
-        const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff,transparent:true });
+        const buttonGeometry = new THREE.PlaneGeometry(1.5, 1.5);
+        const buttonMaterial = new THREE.MeshBasicMaterial({ map: this.playTax, transparent: true });
+        
         const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+       
         buttonMesh.position.set(position.x, position.y - 6, position.z);
         buttonMesh.rotation.y = THREE.MathUtils.degToRad(90);
         buttonMesh.userData.videoID = videoID; // Store video ID in button
@@ -72,11 +90,13 @@ export default class VideoPlayer3D {
     toggleVideo(videoID) {
         const videoData = this.videoPlayers.get(videoID);
         if (videoData) {
-            const { video } = videoData;
+            const { video,buttonMesh } = videoData;
             if (video.paused) {
                 video.play();
+                buttonMesh.material.map = this.pauseTax
             } else {
                 video.pause();
+                buttonMesh.material.map = this.playTax
             }
         }
     }

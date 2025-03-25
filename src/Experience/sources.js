@@ -18,6 +18,16 @@ export default [
         path: 'textures/dirt/color.jpg'
     },
     {
+        name: 'playIcon',
+        type: 'texture',
+        path: 'textures/interactiveTexture/play.png'
+    },
+    {
+        name: 'pauseIcon',
+        type: 'texture',
+        path: 'textures/interactiveTexture/pause.png'
+    },
+    {
         name: 'grassNormalTexture',
         type: 'texture',
         path: 'textures/dirt/normal.jpg'

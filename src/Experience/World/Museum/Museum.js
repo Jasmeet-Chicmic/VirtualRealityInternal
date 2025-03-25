@@ -89,7 +89,7 @@ export default class Museum
                 
             }
         })
-        this.experience.world.videoPlayer.createVideoPlayer("video1", "interactiveAssets/video.mp4", new THREE.Vector3(-50, 15, -98));
+        this.experience.world.videoPlayer.createVideoPlayer("video1", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", new THREE.Vector3(-50, 15, -98));
       this.addDebugProp()
         
     }
