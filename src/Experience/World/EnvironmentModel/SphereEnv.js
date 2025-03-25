@@ -84,7 +84,7 @@ export default class SphereEnv {
             this.currentSphere = this.createSphere(newTexture, 1,destinationPos);
             console.log("this.currentsphere",this.currentSphere);
             
-            this.currentSphere.scale.set(EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE) // Create first sphere
+            // Create first sphere
             return;
         }
     
@@ -92,22 +92,22 @@ export default class SphereEnv {
         const newSphere = this.createSphere(newTexture, 0,destinationPos);
     
         // Animate transition: old sphere fades out, new sphere fades in
-        gsap.to(this.experience.camera.instance, {
-            fov: this.experience.camera.instance.fov, // Simulate depth zoom in
-            duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
-            onUpdate: () => {
-                this.experience.camera.instance.updateProjectionMatrix();
-            },
-            onComplete:()=>{
-               this.experience.camera.resetFov()
-                this.experience.camera.instance.updateProjectionMatrix();
-                this.scene.remove(this.currentSphere)
-                this.currentSphere.geometry.dispose();
-                this.currentSphere.material.dispose();
-                this.currentSphere = newSphere;
-            },
-            ease: "power2.out",
-        });
+        // gsap.to(this.experience.camera.instance, {
+        //     fov: this.experience.camera.instance.fov, // Simulate depth zoom in
+        //     duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
+        //     onUpdate: () => {
+        //         this.experience.camera.instance.updateProjectionMatrix();
+        //     },
+        //     onComplete:()=>{
+        //        this.experience.camera.resetFov()
+        //         this.experience.camera.instance.updateProjectionMatrix();
+        //         this.scene.remove(this.currentSphere)
+        //         this.currentSphere.geometry.dispose();
+        //         this.currentSphere.material.dispose();
+        //         this.currentSphere = newSphere;
+        //     },
+        //     ease: "power2.out",
+        // });
         gsap.to(newSphere.material, {
            
             opacity: 1,
@@ -115,17 +115,17 @@ export default class SphereEnv {
             ease: "power2.out",
         });
         // Fade out old sphere
-        // gsap.to(this.currentSphere.material, {
-        //     opacity: 0,
-        //     duration: 2,
-        //     ease: "power2.out",
-        //     onComplete: () => {
-        //         this.scene.remove(this.currentSphere);
-        //         this.currentSphere.geometry.dispose();
-        //         this.currentSphere.material.dispose();
-        //         this.currentSphere = newSphere;
-        //     }
-        // });
+        gsap.to(this.currentSphere.material, {
+            opacity: 0,
+            duration: 2,
+            ease: "power2.out",
+            onComplete: () => {
+                this.scene.remove(this.currentSphere);
+                this.currentSphere.geometry.dispose();
+                this.currentSphere.material.dispose();
+                this.currentSphere = newSphere;
+            }
+        });
         
         // Fade in new sphere
         
@@ -166,8 +166,10 @@ export default class SphereEnv {
         }
         const skyMaterial = new THREE.ShaderMaterial({
             vertexShader:   this.skyShaders.vertexShader,
-            fragmentShader: this.skyShaders.fragmentShader
+            fragmentShader: this.skyShaders.fragmentShader,
+            side: THREE.BackSide, 
         });
+
         skyMaterial.uniforms = {
             uProgress: {
                 value: 0.0
@@ -182,6 +184,7 @@ export default class SphereEnv {
             },
           
         };
+        
         // const material = new THREE.MeshBasicMaterial({
         //     map: texture,
         //     side: THREE.BackSide,
@@ -192,10 +195,10 @@ export default class SphereEnv {
         // });
     
         const sphere = new THREE.Mesh(this.geometry, skyMaterial);
-       
+        sphere.scale.set(EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE)
         sphere.position.set(destinationPos.x,destinationPos.y,destinationPos.z); // Place new sphere at the same position
         this.scene.add(sphere);
-        console.log("this.scene",this.scene);
+     
         
         // sphere.visible = false
         return sphere;

@@ -170,7 +170,7 @@ export default class Museum
         this.muesumModelMesh.material.colorWrite = false
     }
     enableMusuemMesh(){
-        this.muesumModelMesh.material.colorWrite= true
+        // this.muesumModelMesh.material.colorWrite= true
     }
     update()
     {
