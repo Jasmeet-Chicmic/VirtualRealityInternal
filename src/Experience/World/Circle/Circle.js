@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../../Experience'
 import { DoubleSide } from 'three'
+import { EXPERIENCE } from '../../../Constants'
 
 export default class Circle
 {
@@ -36,7 +37,7 @@ export default class Circle
     setGeometry()
     {
         // Outer ring
-        this.outerGeometry = new THREE.CircleGeometry(0.3, 64);
+        this.outerGeometry = new THREE.CircleGeometry(0.1, 64);
 
         // Inner ring (smaller)
         // this.innerGeometry = new THREE.RingGeometry(0.05, 0.07, 64);
@@ -66,7 +67,7 @@ export default class Circle
 
     setMesh()
     {
-        this.scale = 6
+        this.scale = EXPERIENCE.MOVABLE_CIRCLE_SCALE
         // Outer ring mesh
         this.outerMesh = new THREE.Mesh(this.outerGeometry, this.outerMaterial);
         this.outerMesh.scale.set(this.scale,this.scale,this.scale);

@@ -23,7 +23,7 @@ export default class SphereEnv {
     }
 
     setGeometry() {
-        this.geometry = new THREE.SphereGeometry(600, 64, 64)
+        this.geometry = new THREE.SphereGeometry(100, 32, 32)
     }
 
     setMaterial() {
@@ -77,16 +77,19 @@ export default class SphereEnv {
         }
     }
     
-    changeTexture(newTexture) {
+    changeTexture(newTexture,destinationPos = {x:0,y:0,z:0}) {
         if (!newTexture) return;
     
         if (!this.currentSphere) {
-            this.currentSphere = this.createSphere(newTexture, 1); // Create first sphere
+            this.currentSphere = this.createSphere(newTexture, 1,destinationPos);
+            console.log("this.currentsphere",this.currentSphere);
+            
+            this.currentSphere.scale.set(EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE) // Create first sphere
             return;
         }
     
         // Create a new sphere with the new texture, start with opacity 0
-        const newSphere = this.createSphere(newTexture, 0);
+        const newSphere = this.createSphere(newTexture, 0,destinationPos);
     
         // Animate transition: old sphere fades out, new sphere fades in
         gsap.to(this.experience.camera.instance, {
@@ -98,6 +101,7 @@ export default class SphereEnv {
             onComplete:()=>{
                this.experience.camera.resetFov()
                 this.experience.camera.instance.updateProjectionMatrix();
+                this.scene.remove(this.currentSphere)
                 this.currentSphere.geometry.dispose();
                 this.currentSphere.material.dispose();
                 this.currentSphere = newSphere;
@@ -126,18 +130,19 @@ export default class SphereEnv {
         // Fade in new sphere
         
     }
-    changeTextureForVR(newTexture){
+    changeTextureForVR(newTexture,destinationPos = {x:0,y:0,z:0}){
         if (!newTexture) return;
     
         if (!this.currentSphere) {
-            this.currentSphere = this.createSphere(newTexture, 1); // Create first sphere
+            this.currentSphere = this.createSphere(newTexture, 1,destinationPos); // Create first sphere
             return;
         }
     
         // Create a new sphere with the new texture, start with opacity 0
-        const newSphere = this.createSphere(newTexture, 1);
+        const newSphere = this.createSphere(newTexture, 1,destinationPos);
         this.currentSphere.geometry.dispose();
         this.currentSphere.material.dispose();
+        this.scene.remove(this.currentSphere)
         this.currentSphere = newSphere;
     
     }
@@ -148,20 +153,51 @@ export default class SphereEnv {
     /**
      * Creates a new sphere with a given texture and opacity.
      */
-    createSphere(texture, initialOpacity) {
-        const material = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.BackSide,
-            transparent: true,
-            opacity: initialOpacity,
-            
-            
+    createSphere(texture, initialOpacity,destinationPos) {
+        this.skyShaders = {
+            uniforms: {
+                progress: {
+                    type: "f",
+                    value: 0
+                }
+            },
+            vertexShader: ["varying vec2 vUv;", "void main()", "{", "   vUv = uv;", "   vec4 worldPosition = modelMatrix * vec4( position, 1.0 );", "   gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );", "}"].join("\n"),
+            fragmentShader: ["varying vec2 vUv;", "uniform float uProgress;", "uniform sampler2D uMap0;", "uniform sampler2D uMap1;", "", "void main( void ) {", "", "   vec4 colorFromMap0 = texture2D(uMap0, vUv);", "   vec4 colorFromMap1 = texture2D(uMap1, vUv);", "   vec3 color = mix(colorFromMap0.xyz, colorFromMap1.xyz, uProgress);", "", "   gl_FragColor = vec4( color,  1.0 ); ", "}"].join("\n")
+        }
+        const skyMaterial = new THREE.ShaderMaterial({
+            vertexShader:   this.skyShaders.vertexShader,
+            fragmentShader: this.skyShaders.fragmentShader
         });
+        skyMaterial.uniforms = {
+            uProgress: {
+                value: 0.0
+            },
+            uMap0: {
+                value: texture,
+                type: 't'
+            },
+            uMap1: {
+                value: this.experience.resources.items["NewMuseumEnv"],
+                type: 't'
+            },
+          
+        };
+        // const material = new THREE.MeshBasicMaterial({
+        //     map: texture,
+        //     side: THREE.BackSide,
+        //     transparent: true,
+        //     opacity: initialOpacity,
+            
+            
+        // });
     
-        const sphere = new THREE.Mesh(this.geometry, material);
-        sphere.position.set(0,0,0); // Place new sphere at the same position
+        const sphere = new THREE.Mesh(this.geometry, skyMaterial);
+       
+        sphere.position.set(destinationPos.x,destinationPos.y,destinationPos.z); // Place new sphere at the same position
         this.scene.add(sphere);
-        sphere.visible = false
+        console.log("this.scene",this.scene);
+        
+        // sphere.visible = false
         return sphere;
     }
     

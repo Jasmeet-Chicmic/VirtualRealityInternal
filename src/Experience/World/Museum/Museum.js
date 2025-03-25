@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import {PerspectiveCamera} from 'three'
 import Experience from '../../Experience.js'
 import { DoubleSide } from 'three'
+import { EXPERIENCE } from '../../../Constants.js'
 
 
 export default class Museum
@@ -46,7 +47,7 @@ export default class Museum
     {
       
        
-        let scale = 0.31
+        let scale = EXPERIENCE.MODEL_SCALE
         this.model = this.resource
         this.model.scale.set(scale,scale,scale)
         this.model.rotation.y = -Math.PI /2

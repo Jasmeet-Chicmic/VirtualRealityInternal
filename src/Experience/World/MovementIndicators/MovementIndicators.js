@@ -3,6 +3,7 @@ import Experience from '../../Experience'
 import { DoubleSide } from 'three'
 import { BoxGeometry } from 'three'
 import { RingGeometry } from 'three'
+import { EXPERIENCE } from '../../../Constants'
 
 
 export default class MovementIndicators
@@ -41,7 +42,7 @@ export default class MovementIndicators
     }
     setGeometry()
     {
-       this.geometry = new THREE.CircleGeometry(2,32);
+       this.geometry = new THREE.CircleGeometry(1,32);
     //    this.geometry = new THREE.BoxGeometry(0.1,0.1,0.1); //vr
     //    this.geometry = new THREE.BoxGeometry(1,1,1); //vr
     }
@@ -72,9 +73,9 @@ export default class MovementIndicators
         this.mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ transparent:true,side:DoubleSide ,opacity:1,map:this.experience.resources.items["StaticIndicator"]}))
         this.mesh.position.copy(position)
         this.mesh.rotation.x = -Math.PI / 2;
-        this.mesh.position.y -=2
+        // this.mesh.position.y -=2
         this.mesh.name = name
-        // this.mesh.scale.set(3,3,3)
+        this.mesh.scale.set(EXPERIENCE.INDICATOR_SCALE,EXPERIENCE.INDICATOR_SCALE,EXPERIENCE.INDICATOR_SCALE)
         this.mesh.renderOrder = 3
         this.camerasToIntersect.push(this.mesh)
         this.allIndicators.push(this.mesh)

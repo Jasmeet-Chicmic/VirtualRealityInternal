@@ -269,7 +269,7 @@ setIndicatorHoverColor(isCameraIntersected) {
           
         const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z);
         const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
-        this.camera.cameraGroup.lookAt(lookAtTarget);
+        // this.camera.cameraGroup.lookAt(lookAtTarget);
        
          endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
         
@@ -280,7 +280,7 @@ setIndicatorHoverColor(isCameraIntersected) {
     
       
       
-      this.experience.world.sphere.changeTexture(tex);
+      this.experience.world.sphere.changeTexture(tex,destinationPos);
       this.experience.world.environment.setNewEnv(tex)
     gsap.to(this.camera.cameraGroup.position, {
         duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
@@ -362,7 +362,7 @@ async moveCameraForVR(node,destinationPos,initialRotation=false) {
 this.experience.world.museum.enableMusuemMesh()
 this.experience.world.circle.disableCircle()
 this.experience.world.movementIndicators.disableAllIndicators()
-this.experience.world.sphere.changeTextureForVR(tex);
+this.experience.world.sphere.changeTextureForVR(tex,destinationPos);
 this.experience.world.environment.setNewEnv(tex)
 this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z)
 

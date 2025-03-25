@@ -78,7 +78,7 @@ export default class VideoPlayer3D {
         this.videoPlayers.set(videoID, { video, videoMesh, buttonMesh, group: videoGroup });
         videoGroup.renderOrder = 3;
         // Add to scene
-        this.scene.add(videoGroup);
+        // this.scene.add(videoGroup);
 
         return videoGroup;
     }

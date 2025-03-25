@@ -10,6 +10,7 @@ import Resources from './Utils/Resources.js'
 
 import sources from './sources.js'
 import Loader from './Utils/Loader.js';
+// import { skybox } from './Utils/ThreeUtilities/ThreeUtilities.js';
 
 let instance = null
 
@@ -45,7 +46,9 @@ export default class Experience
         this.raycaster = new Raycaster();
         this.renderer = new Renderer()
         this.world = new World()
-   
+        // skyBox = new skybox(this.scene);
+        // console.log("skybox",skyBox);
+        
 
         // Resize event
         this.sizes.on('resize', () =>
