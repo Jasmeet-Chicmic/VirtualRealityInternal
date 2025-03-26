@@ -76,6 +76,8 @@ export default class Intersections extends EventEmitter{
     if (intersects.length === 0) return;
 
     const point = intersects[0].point;
+    
+    
     const normalMatrix = new THREE.Matrix3().getNormalMatrix(this.experience.world.museum.muesumModelMesh.matrixWorld);
     //fetching matrix of model to convert the normal vector to world coordinates, matrix means The transformation matrix that moves the model into the scene
     const n = intersects[0].face.normal.clone().applyNormalMatrix(normalMatrix);

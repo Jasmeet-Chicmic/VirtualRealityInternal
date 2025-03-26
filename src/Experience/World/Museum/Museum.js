@@ -90,7 +90,8 @@ export default class Museum
                 
             }
         })
-        this.experience.world.videoPlayer.createVideoPlayer("video1", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", new THREE.Vector3(-50, 15, -98));
+        this.experience.world.videoPlayer.createVideoPlayer("video1", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", new THREE.Vector3(-114, 37, -223));
+        
       this.addDebugProp()
         
     }
@@ -170,7 +171,7 @@ export default class Museum
         this.muesumModelMesh.material.colorWrite = false
     }
     enableMusuemMesh(){
-        this.muesumModelMesh.material.colorWrite= true
+        // this.muesumModelMesh.material.colorWrite= true
     }
     update()
     {

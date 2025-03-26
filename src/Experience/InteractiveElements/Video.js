@@ -56,7 +56,7 @@ export default class VideoPlayer3D {
             transparent: true,
         });
 
-        const videoGeometry = new THREE.PlaneGeometry(15, 10);
+        const videoGeometry = new THREE.PlaneGeometry(45, 25);
         const videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
        
         videoMesh.position.copy(position);
@@ -64,12 +64,12 @@ export default class VideoPlayer3D {
         videoGroup.add(videoMesh);
 
         // Create play/pause button
-        const buttonGeometry = new THREE.PlaneGeometry(1.5, 1.5);
+        const buttonGeometry = new THREE.PlaneGeometry(3, 3);
         const buttonMaterial = new THREE.MeshBasicMaterial({ map: this.playTax, transparent: true });
         
         const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
        
-        buttonMesh.position.set(position.x, position.y - 6, position.z);
+        buttonMesh.position.set(position.x, position.y - 15, position.z);
         buttonMesh.rotation.y = THREE.MathUtils.degToRad(90);
         buttonMesh.userData.videoID = videoID; // Store video ID in button
         videoGroup.add(buttonMesh);
@@ -78,7 +78,7 @@ export default class VideoPlayer3D {
         this.videoPlayers.set(videoID, { video, videoMesh, buttonMesh, group: videoGroup });
         videoGroup.renderOrder = 3;
         // Add to scene
-        // this.scene.add(videoGroup);
+        this.scene.add(videoGroup);
 
         return videoGroup;
     }

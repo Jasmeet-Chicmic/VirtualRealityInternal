@@ -210,7 +210,7 @@ gsap.to(this.sphere.material.uniforms.uProgress, {
      * Creates a new sphere with a given texture and opacity.
      */
     addNewTexAndUpdatePos(texture, initialOpacity,destinationPos) {
-     
+       
         if(this.prevTexture){
             this.skyMaterial.uniforms.uMap0.value = this.prevTexture;
         }else{
