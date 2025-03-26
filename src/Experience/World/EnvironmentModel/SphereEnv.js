@@ -153,7 +153,7 @@ export default class SphereEnv {
       this.addNewTexAndUpdatePos(newTexture, 0,destinationPos);
 gsap.to(this.sphere.material.uniforms.uProgress, {
     value: 1.0, // Target opacity
-    duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB*2,
+    duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
    
     onComplete:()=>{
         this.sphere.material.uniforms.uMap0.value = this.sphere.material.uniforms.uMap1.value;

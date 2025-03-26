@@ -63,3 +63,8 @@ export default [
         path:'models/Museum/Museum_Model_new.fbx'
     }
 ]
+
+
+export const UI_PATHS = {
+    INITIAL_SCREEN : "./2d/initialScreen/initialScreen.png"
+}
