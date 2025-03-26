@@ -61,7 +61,7 @@ export default class Circle
 
     setMaterial()
     {
-        this.outerMaterial = new THREE.MeshBasicMaterial({transparent:true,opacity:0.6 ,map:this.experience.resources.items["Indicator"]});
+        this.outerMaterial = new THREE.MeshBasicMaterial({opacity:0.6 ,map:this.experience.resources.items["Indicator"]});
         // this.innerMaterial = new THREE.MeshBasicMaterial({ color: "brown", });
     }
 
@@ -72,7 +72,7 @@ export default class Circle
         this.outerMesh = new THREE.Mesh(this.outerGeometry, this.outerMaterial);
         this.outerMesh.scale.set(this.scale,this.scale,this.scale);
         this.outerMesh.rotation.x = -Math.PI / 2;
-
+ 
         // Inner ring mesh
         // this.innerMesh = new THREE.Mesh(this.innerGeometry, this.innerMaterial);
         // this.innerMesh.scale.set(this.scale,this.scale,this.scale);

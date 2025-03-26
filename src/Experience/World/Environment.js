@@ -65,10 +65,10 @@ export default class Environment
         }
     }
     setNewEnv(texture){
-        const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
-        // envMap.mapping = THREE.CubeRefractionMapping;
-        this.scene.background = envMap
-        this.scene.environment = envMap
+        // const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
+      
+        // this.scene.background = envMap
+        // this.scene.environment = envMap
     }
     setEnvironmentMap()
     {
@@ -76,9 +76,9 @@ export default class Environment
         this.environmentMap.intensity = 5
         this.environmentMap.texture = this.resources.items.MuseumEnv
         this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
-        this.scene.background = this.environmentMap.texture
+        // this.scene.background = this.environmentMap.texture
         // this.scene.background = new THREE.Color('white')
-        this.scene.environment = this.environmentMap.texture
+        // this.scene.environment = this.environmentMap.texture
 
         this.environmentMap.updateMaterials = () =>
         {
