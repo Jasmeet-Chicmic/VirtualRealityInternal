@@ -269,11 +269,14 @@ setIndicatorHoverColor(isCameraIntersected) {
           
         const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z);
         const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
-        // this.camera.cameraGroup.lookAt(lookAtTarget);
+        this.camera.cameraGroup.lookAt(lookAtTarget);
        
          endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
+         const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0)); 
+
         
-        // Reset to original rotation before animating
+         endQuaternion.multiply(offsetQuaternion);
+       
         this.camera.cameraGroup.rotation.copy(startRotation);
       
       }
@@ -318,6 +321,14 @@ setIndicatorHoverColor(isCameraIntersected) {
       w: endQuaternion.w,
       ease: "power2.out"
   });
+  //   gsap.to(this.camera.instance.quaternion, {
+  //     duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
+  //     x: endQuaternion.x,
+  //     y: endQuaternion.y,
+  //     z: endQuaternion.z,
+  //     w: endQuaternion.w,
+  //     ease: "power2.out"
+  // });
 }
 }
 async moveCameraForVR(node,destinationPos,initialRotation=false) {
