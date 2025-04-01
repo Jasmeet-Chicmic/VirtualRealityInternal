@@ -256,8 +256,9 @@ setIndicatorHoverColor(isCameraIntersected) {
         this.currentCamera.visible = false;
         const name = this.currentCamera.name.slice(-4);
       
-        const tex = await this.experience.world.sphere.loadNewTexture(
-            EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
+        const {newTexture:tex,displacementTexture} = await this.experience.world.sphere.loadNewTexture(
+            EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg",
+             EXPERIENCE.RENDERS_FOLDER_BASE_DISP + EXPERIENCE["3DRENDER_DISP_BASE_NAME"] + name + ".png"
         );
        
 
@@ -285,7 +286,7 @@ setIndicatorHoverColor(isCameraIntersected) {
     
       
       
-      this.experience.world.sphere.changeTexture(tex,destinationPos);
+      this.experience.world.sphere.changeTexture({displacementTexture,tex},destinationPos);
       this.experience.world.environment.setNewEnv(tex)
     gsap.to(this.camera.cameraGroup.position, {
         duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
@@ -294,7 +295,7 @@ setIndicatorHoverColor(isCameraIntersected) {
         z: destinationPos.z,
         onStart: () => {
         
-          
+          this.experience.world.videoPlayer.hideAllVideo()
           this.experience.world.museum.enableMusuemMesh()
           this.experience.world.circle.disableCircle()
           this.experience.world.movementIndicators.disableAllIndicators()
@@ -307,6 +308,7 @@ setIndicatorHoverColor(isCameraIntersected) {
         onComplete: () => {
           this.camera.setCameraLayer(0)
           this.experience.world.museum.disableMusuemMesh()
+          this.experience.world.videoPlayer.showAllVideo()
           this.experience.world.circle.enableCircle()
           this.experience.world.movementIndicators.enableAllIndicators(destinationPos,this.currentCamera.name)
           
@@ -349,8 +351,9 @@ async moveCameraForVR(node,destinationPos,initialRotation=false) {
   this.currentCamera = node;
   const name = this.currentCamera.name.slice(-4);
 
-  const tex = await this.experience.world.sphere.loadNewTexture(
-      EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg"
+  const {newTexture:tex,displacementTexture} = await this.experience.world.sphere.loadNewTexture(
+      EXPERIENCE.RENDERS_FOLDER_BASE + EXPERIENCE["3DRENDER_BASE_NAME"] + name + ".jpeg",
+        EXPERIENCE.RENDERS_FOLDER_BASE_DISP + EXPERIENCE["3DRENDER_DISP_BASE_NAME"] + name + ".png"
   );
 
 
@@ -375,7 +378,7 @@ async moveCameraForVR(node,destinationPos,initialRotation=false) {
 this.experience.world.museum.enableMusuemMesh()
 this.experience.world.circle.disableCircle()
 this.experience.world.movementIndicators.disableAllIndicators()
-this.experience.world.sphere.changeTextureForVR(tex,destinationPos);
+this.experience.world.sphere.changeTextureForVR({displacementTexture,tex},destinationPos);
 this.experience.world.environment.setNewEnv(tex)
 this.camera.cameraGroup.position.set(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z)
 

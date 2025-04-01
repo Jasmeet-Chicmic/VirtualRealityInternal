@@ -1,7 +1,10 @@
 export const EXPERIENCE = {
     CAMERA_BASE_NAME : "DS_Cam_",
     "3DRENDER_BASE_NAME" : "360_test_",
+    "3DRENDER_DISP_BASE_NAME":"360_test_disp_",
     RENDERS_FOLDER_BASE:"textures/environmentMap/MuseumEnv/",
+    RENDERS_FOLDER_BASE_DISP:"textures/environmentMap/MuseumEnvDisplacement/",
+
     RENDER_AND_CAMERA_IDs:{
        '0000':"0000",
        '0001':"0001",
@@ -21,7 +24,7 @@ export const EXPERIENCE = {
     },
     INDICATOR_HOVER_COLOR:"black",
     HEIGHT_OF_CAMERA:22,
-    CAMERA_MOVEMENT_SPEED_FOR_WEB:1,
+    CAMERA_MOVEMENT_SPEED_FOR_WEB:10,
     MODEL_SCALE :0.7,
     SKYBOX_SCALE:16,
     MOVABLE_CIRCLE_SCALE:22,

@@ -12,7 +12,7 @@ export default class SphereEnv {
         this.textures = [] // Dynamic texture queue
         this.currentTexture = null
         this.loadingTexture = null
-        this.prevTexture = null
+        this.prevTexture = {tex:null,displacementTexture:null}
         if(this.debug.active)
             {
                 this.debugFolder = this.debug.ui.addFolder('Sphere')
@@ -31,44 +31,71 @@ export default class SphereEnv {
     setMaterial() {
         this.skyShaders = {
             uniforms: {
-                uProgress: { type: "f", value: 0 },
-                uOpacity: { type: "f", value: 1 }, // Add opacity uniform
-                uMap0: { value: null , type: 't'},
-                uMap1: { value: null, type: 't' }
+                uProgress: { type: "f", value: 0 }, // Used for both blending and displacement scaling
+                uOpacity: { type: "f", value: 1 },
+                uMap0: { value: null, type: "t" },
+                uMap1: { value: null, type: "t" },
+                uDisplacementMap0: { value: null, type: "t" }, 
+                uDisplacementMap1: { value: null, type: "t" }
             },
             vertexShader: `
                 varying vec2 vUv;
+                varying float vDisplacement;
+                
+                uniform sampler2D uDisplacementMap0;
+                uniform sampler2D uDisplacementMap1;
+                uniform float uProgress;
+                
                 void main() {
                     vUv = uv;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    
+                    // Sample displacement maps
+                    float disp0 = texture2D(uDisplacementMap0, vUv).r;
+                    float disp1 = texture2D(uDisplacementMap1, vUv).r;
+    
+                    // Blend displacement maps using uProgress
+                    float blendedDisp = mix(disp0, disp1, uProgress);
+    
+                    // Use uProgress directly to scale displacement
+                    vDisplacement = blendedDisp * uProgress;
+    
+                    // Offset vertex position
+                    vec3 displacedPosition = position + normal * vDisplacement;
+    
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
                 }
             `,
             fragmentShader: `
                 varying vec2 vUv;
+    
                 uniform float uProgress;
-                uniform float uOpacity; // Opacity control
+                uniform float uOpacity;
                 uniform sampler2D uMap0;
                 uniform sampler2D uMap1;
                 
                 void main() {
-                    vec4 colorFromMap0 = texture2D(uMap0, vUv);
+                    // Scale texture coordinates dynamically based on uProgress
+                    vec2 scaledUV = vUv * (1.0 + uProgress * 0.5);
+    
+                    vec4 colorFromMap0 = texture2D(uMap0, scaledUV);
                     vec4 colorFromMap1 = texture2D(uMap1, vUv);
                     vec3 color = mix(colorFromMap0.xyz, colorFromMap1.xyz, uProgress);
-                    
-                    gl_FragColor = vec4(color, uOpacity); // Apply opacity here
+    
+                    gl_FragColor = vec4(color, uOpacity);
                 }
             `
         };
-        
-        // ✅ Now Set Up the Shader Material Properly
-       this.skyMaterial = new THREE.ShaderMaterial({
+    
+        // ✅ Set Up Shader Material
+        this.skyMaterial = new THREE.ShaderMaterial({
             vertexShader: this.skyShaders.vertexShader,
             fragmentShader: this.skyShaders.fragmentShader,
             side: THREE.BackSide,
-            transparent: true, // Necessary for opacity
-            uniforms: THREE.UniformsUtils.clone(this.skyShaders.uniforms) 
+            transparent: true,
+            uniforms: THREE.UniformsUtils.clone(this.skyShaders.uniforms)
         });
     }
+    
     setMesh(){
         this.sphere = new THREE.Mesh(this.geometry, this.skyMaterial);
         this.sphere.scale.set(EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE,EXPERIENCE.SKYBOX_SCALE)
@@ -95,30 +122,42 @@ export default class SphereEnv {
     /**
      * Loads a texture dynamically from a given URL and applies the transition
      */
-    async loadNewTexture(textureUrl) {
+    async loadNewTexture(textureUrl, displacementUrl) {
         this.experience.loader.showLoader();
+        
         try {
-            const newTexture = await this.loadTexture(textureUrl);
+            // Load both textures in parallel
+            const [newTexture, displacementTexture] = await Promise.all([
+                this.loadTexture(textureUrl),
+                this.loadTexture(displacementUrl)
+            ]);
+    
             this.experience.loader.hideLoader();
     
             // Apply texture settings
-            var maxAnisotropy = this.experience.renderer.instance.capabilities.getMaxAnisotropy();
+            const maxAnisotropy = this.experience.renderer.instance.capabilities.getMaxAnisotropy();
+            
             newTexture.anisotropy = maxAnisotropy;
             newTexture.wrapS = THREE.RepeatWrapping;
             newTexture.encoding = THREE.sRGBEncoding;
             newTexture.needsUpdate = true;
             newTexture.repeat.x = -1;
     
-            return newTexture;
+            displacementTexture.anisotropy = maxAnisotropy;
+            displacementTexture.wrapS = THREE.RepeatWrapping;
+            displacementTexture.needsUpdate = true;
+    
+            return { newTexture, displacementTexture };
         } catch (error) {
             this.experience.loader.hideLoader();
-            console.error("Error loading texture:", error);
-            return null;
+            console.error("Error loading textures:", error);
+            return { newTexture: null, displacementTexture: null };
         }
     }
     
-    changeTexture(newTexture,destinationPos = {x:0,y:0,z:0}) {
-        if (!newTexture) return;
+    
+    changeTexture(textures,destinationPos = {x:0,y:0,z:0}) {
+        if (!textures.tex) return;
     
         // if (!this.currentSphere) {
         //     this.currentSphere = this.createSphere(newTexture, 1,destinationPos);
@@ -150,7 +189,7 @@ export default class SphereEnv {
         // });
       // Fade in new sphere
       console.log("this.sphere.material.uniforms.uProgress",this.sphere.material.uniforms.uProgress);
-      this.addNewTexAndUpdatePos(newTexture, 0,destinationPos);
+      this.addNewTexAndUpdatePos(textures, 0,destinationPos);
 gsap.to(this.sphere.material.uniforms.uProgress, {
     value: 1.0, // Target opacity
     duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
@@ -185,8 +224,8 @@ gsap.to(this.sphere.material.uniforms.uProgress, {
         // Fade in new sphere
         
     }
-    changeTextureForVR(newTexture,destinationPos = {x:0,y:0,z:0}){
-        if (!newTexture) return;
+    changeTextureForVR(textures,destinationPos = {x:0,y:0,z:0}){
+        if (!textures.tex) return;
     
         // if (!this.currentSphere) {
         //     this.currentSphere = this.createSphere(newTexture, 1,destinationPos); // Create first sphere
@@ -194,7 +233,7 @@ gsap.to(this.sphere.material.uniforms.uProgress, {
         // }
     
         // Create a new sphere with the new texture, start with opacity 0
-    this.addNewTexAndUpdatePos(newTexture, 1,destinationPos);
+    this.addNewTexAndUpdatePos(textures, 1,destinationPos);
     this.sphere.material.uniforms.uMap0.value = this.sphere.material.uniforms.uMap1.value;
         // this.currentSphere.geometry.dispose();
         // this.currentSphere.material.dispose();
@@ -209,18 +248,21 @@ gsap.to(this.sphere.material.uniforms.uProgress, {
     /**
      * Creates a new sphere with a given texture and opacity.
      */
-    addNewTexAndUpdatePos(texture, initialOpacity,destinationPos) {
-       
-        if(this.prevTexture){
-            this.skyMaterial.uniforms.uMap0.value = this.prevTexture;
+    addNewTexAndUpdatePos(textures, initialOpacity,destinationPos) {
+        const texture = textures.tex
+        if(this.prevTexture.tex){
+            this.skyMaterial.uniforms.uMap0.value = this.prevTexture.tex;
+            this.skyMaterial.uniforms.uDisplacementMap0.value = this.prevTexture.displacementTexture;
+
         }else{
             this.skyMaterial.uniforms.uMap0.value = texture
+            this.skyMaterial.uniforms.uDisplacementMap0.value = textures.displacementTexture;
         }
         // ✅ Set Uniforms
         this.skyMaterial.uniforms.uMap1.value = texture;
-      
+        this.skyMaterial.uniforms.uDisplacementMap1.value = textures.displacementTexture;
         
-        this.prevTexture = texture;
+        this.prevTexture = {tex:texture,displacementTexture:textures.displacementTexture};
         this.sphere.position.set(destinationPos.x,destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA,destinationPos.z);
         
         
@@ -256,10 +298,13 @@ gsap.to(this.sphere.material.uniforms.uProgress, {
      * Dynamically loads a texture from a URL
      */
     loadTexture(url) {
+        console.log("Load texture called");
         return new Promise((resolve,rej) => {
             const loader = new THREE.TextureLoader()
             loader.load(url, (texture) => {
                 texture.needsUpdate = true
+                console.log("texture loaded",texture);
+                
                 resolve(texture)
             },()=>{
                 rej("Error loading texture")

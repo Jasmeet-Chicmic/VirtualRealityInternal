@@ -1,8 +1,6 @@
 import * as THREE from 'three'
 import Experience from '../../Experience'
 import { DoubleSide } from 'three'
-import { BoxGeometry } from 'three'
-import { RingGeometry } from 'three'
 import { EXPERIENCE } from '../../../Constants'
 
 

@@ -100,4 +100,18 @@ export default class VideoPlayer3D {
             }
         }
     }
+
+
+    hideAllVideo(){
+        this.videoPlayers.forEach((videoObj)=>{
+            console.log(videoObj,"videoObj");
+            videoObj.group.visible = false
+        })
+    }
+    showAllVideo(){
+        this.videoPlayers.forEach((videoObj)=>{
+            console.log(videoObj,"videoObj");
+            videoObj.group.visible = true
+        })
+    }
 }
