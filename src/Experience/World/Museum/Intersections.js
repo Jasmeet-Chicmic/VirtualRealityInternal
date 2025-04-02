@@ -12,13 +12,14 @@ export default class Intersections extends EventEmitter{
       this.adminMode = true;
     }
     this.experience = new Experience();
+    
     this.currentCamera = null
     this.prevCamera = null;
     this.hoverColor = new Color(EXPERIENCE.INDICATOR_HOVER_COLOR)
     // this.shipTooltip = document.getElementById("shipToolTip");
     this.setUtils();
     this.setEvents();
-    this.initialAnimation()
+    this.experience.world.cameraAnimationManager.on(EVENTS.INITIAL_CAMERA_ANIMATION,()=>{this.initialAnimation()},this)
     this.experience.renderer.on(EVENTS.XR_SESSION_START,()=>{this.initialAnimationForVr()},this)
   }
   initialAnimationForVr(){
@@ -244,7 +245,9 @@ setIndicatorHoverColor(isCameraIntersected) {
 
     }
 
+    let time =  EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB;
         if(initialRotation){
+          time = 0
           node.visible = false
           this.camera.setCameraLayer(1)
         }
@@ -271,15 +274,15 @@ setIndicatorHoverColor(isCameraIntersected) {
           
         const lookAtTarget = new THREE.Vector3(destinationPos.x, destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA, destinationPos.z);
         const startRotation = new THREE.Euler().copy(this.camera.cameraGroup.rotation);
-        this.camera.cameraGroup.lookAt(lookAtTarget);
+        // this.camera.cameraGroup.lookAt(lookAtTarget);
        
          endQuaternion = new THREE.Quaternion().copy(this.camera.cameraGroup.quaternion);
-         const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0)); 
+        //  const offsetQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0)); 
 
         
-         endQuaternion.multiply(offsetQuaternion);
+        //  endQuaternion.multiply(offsetQuaternion);
        
-        this.camera.cameraGroup.rotation.copy(startRotation);
+        // this.camera.cameraGroup.rotation.copy(startRotation);
       
       }
     
@@ -288,7 +291,7 @@ setIndicatorHoverColor(isCameraIntersected) {
       this.experience.world.sphere.changeTexture(tex,destinationPos);
       this.experience.world.environment.setNewEnv(tex)
     gsap.to(this.camera.cameraGroup.position, {
-        duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
+        duration:time,
         x: destinationPos.x,
         y: destinationPos.y+EXPERIENCE.HEIGHT_OF_CAMERA,
         z: destinationPos.z,
@@ -315,14 +318,14 @@ setIndicatorHoverColor(isCameraIntersected) {
         ease: "power2.inout",
     });
     if(initialRotation){
-    gsap.to(this.camera.instance.quaternion, {
-      duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
-      x: endQuaternion.x,
-      y: endQuaternion.y,
-      z: endQuaternion.z,
-      w: endQuaternion.w,
-      ease: "power2.out"
-  });
+  //   gsap.to(this.camera.instance.quaternion, {
+  //     duration: time,
+  //     x: endQuaternion.x,
+  //     y: endQuaternion.y,
+  //     z: endQuaternion.z,
+  //     w: endQuaternion.w,
+  //     ease: "power2.out"
+  // });
   //   gsap.to(this.camera.instance.quaternion, {
   //     duration: EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB,
   //     x: endQuaternion.x,
@@ -339,7 +342,9 @@ async moveCameraForVR(node,destinationPos,initialRotation=false) {
     this.experience.camerasToIntersect.push(this.currentCamera);
 
   }
+  let time =  EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB
   if(initialRotation){
+    time =0;
     this.camera.setCameraLayer(1)
   }
   if (this.currentCamera) {

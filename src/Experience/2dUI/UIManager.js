@@ -2,7 +2,7 @@ import { UI_PATHS } from "../sources";
 
 export default class UIManager {
     constructor() {
-        this.initialScreen();
+        // this.initialScreen();
     }
 
     initialScreen() {

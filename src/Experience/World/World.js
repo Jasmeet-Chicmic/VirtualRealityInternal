@@ -9,10 +9,12 @@ import MovementIndicators from './MovementIndicators/MovementIndicators.js'
 import VRSetup from '../Utils/VRSetup.js'
 import VideoPlayer3D from '../InteractiveElements/Video.js'
 import UIManager from '../2dUI/UIManager.js'
+import CameraAnimationManager from '../../Managers/CameraAnimationManager.js'
 export default class World
 {
     constructor()
     {
+       
         this.experience = new Experience()
         this.scene = this.experience.scene
         this.resources = this.experience.resources
@@ -22,6 +24,7 @@ export default class World
         this.resources.on(EVENTS.READY, () =>
         {
             // Setup
+            this.cameraAnimationManager = new CameraAnimationManager()
             this.UIManager = new UIManager()
             this.movementIndicators = new MovementIndicators()
             this.videoPlayer = new VideoPlayer3D(this.scene)

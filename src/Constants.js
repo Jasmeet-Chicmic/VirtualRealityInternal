@@ -21,18 +21,18 @@ export const EXPERIENCE = {
     },
     INDICATOR_HOVER_COLOR:"black",
     HEIGHT_OF_CAMERA:22,
-    CAMERA_MOVEMENT_SPEED_FOR_WEB:1,
+    CAMERA_MOVEMENT_SPEED_FOR_WEB:2,
     MODEL_SCALE :0.7,
     SKYBOX_SCALE:16,
     MOVABLE_CIRCLE_SCALE:22,
     INDICATOR_SCALE:3
-
    }
 
 
 export const EVENTS = {
    READY:"ready",
    ON_NODE_SELECT:"onNodeSelect",
-   XR_SESSION_START:"xrsessionstart"
+   XR_SESSION_START:"xrsessionstart",
+   INITIAL_CAMERA_ANIMATION:"initialCameraAnimation"
 
 }

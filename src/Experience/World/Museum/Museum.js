@@ -65,7 +65,8 @@ export default class Museum
                 
                 if(child.name.includes("0000")){
                 this.firstCamera = child;
-              
+               
+                
                     
             }
             }
