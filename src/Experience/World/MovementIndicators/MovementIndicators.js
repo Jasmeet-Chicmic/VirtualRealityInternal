@@ -80,6 +80,7 @@ export default class MovementIndicators
         this.camerasToIntersect.push(this.mesh)
         this.allIndicators.push(this.mesh)
         this.scene.add(this.mesh)
+        return this.mesh;
     }
    
 

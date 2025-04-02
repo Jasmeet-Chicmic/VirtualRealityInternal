@@ -248,6 +248,8 @@ setIndicatorHoverColor(isCameraIntersected) {
     let time =  EXPERIENCE.CAMERA_MOVEMENT_SPEED_FOR_WEB;
         if(initialRotation){
           time = 0
+      
+          
           node.visible = false
           this.camera.setCameraLayer(1)
         }

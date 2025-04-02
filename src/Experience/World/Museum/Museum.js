@@ -39,7 +39,7 @@ export default class Museum
     
         // cube.layers.enable(1)
        
-     
+        return cube;
       
        
     }
@@ -60,11 +60,11 @@ export default class Museum
         {
             
             if(child instanceof PerspectiveCamera){
-                this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
+               const indicator =  this.createDebugCameraIndicator(child.getWorldPosition(child.position),child.name);
               
-                
+                    
                 if(child.name.includes("0000")){
-                this.firstCamera = child;
+                this.firstCamera = indicator;
                
                 
                     
